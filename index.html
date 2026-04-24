@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visa Inc. | Planview Account Plan</title>
+<style>
+  :root {
+    --bg: #0D1B2E;
+    --card: #152233;
+    --card2: #1A2B40;
+    --border: #1E3A5F;
+    --navy: #1B3A6B;
+    --orange: #F05A28;
+    --blue: #00A1E0;
+    --green: #00C48C;
+    --yellow: #F5A623;
+    --red: #E8524A;
+    --text: #E8EAF0;
+    --muted: #8A9BB0;
+    --white: #FFFFFF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; min-height: 100vh; }
+
+  /* HEADER */
+  .header { background: linear-gradient(135deg, #0D1B2E 0%, #1B3A6B 100%); padding: 0; border-bottom: 3px solid var(--orange); display: flex; align-items: stretch; }
+  .header-logo { background: var(--orange); padding: 16px 24px; display: flex; align-items: center; gap: 10px; }
+  .header-logo span { font-size: 20px; font-weight: 800; color: white; letter-spacing: 1px; }
+  .header-content { padding: 14px 28px; flex: 1; display: flex; align-items: center; justify-content: space-between; }
+  .header-title { font-size: 22px; font-weight: 700; color: white; }
+  .header-title span { color: var(--orange); }
+  .header-meta { display: flex; gap: 20px; align-items: center; }
+  .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .badge-orange { background: rgba(240,90,40,0.2); color: var(--orange); border: 1px solid var(--orange); }
+  .badge-blue { background: rgba(0,161,224,0.2); color: var(--blue); border: 1px solid var(--blue); }
+  .badge-green { background: rgba(0,196,140,0.2); color: var(--green); border: 1px solid var(--green); }
+  .badge-red { background: rgba(232,82,74,0.2); color: var(--red); border: 1px solid var(--red); }
+  .badge-yellow { background: rgba(245,166,35,0.2); color: var(--yellow); border: 1px solid var(--yellow); }
+
+  /* TABS */
+  .tabs { background: #0A1525; display: flex; overflow-x: auto; border-bottom: 1px solid var(--border); padding: 0 20px; gap: 2px; }
+  .tab { padding: 12px 18px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--muted); border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.2s; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--orange); border-bottom-color: var(--orange); font-weight: 600; }
+  .tab-icon { margin-right: 6px; }
+
+  /* CONTENT */
+  .content { display: none; padding: 24px; max-width: 1400px; margin: 0 auto; }
+  .content.active { display: block; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .col-span-2 { grid-column: span 2; }
+  .col-span-3 { grid-column: span 3; }
+
+  /* CARDS */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+  .card2 { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .card-header { font-size: 13px; font-weight: 700; color: var(--orange); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .card-header::before { content: ''; display: inline-block; width: 3px; height: 14px; background: var(--orange); border-radius: 2px; }
+  .section-title { font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+
+  /* STAT CARDS */
+  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 18px; text-align: center; }
+  .stat-val { font-size: 28px; font-weight: 800; color: var(--orange); }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-sub { font-size: 12px; color: var(--text); margin-top: 6px; }
+
+  /* STAKEHOLDER CARDS */
+  .stakeholder-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  .stakeholder-card { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; position: relative; overflow: hidden; }
+  .stakeholder-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+  .stakeholder-card.supporter::before { background: var(--green); }
+  .stakeholder-card.neutral::before { background: var(--yellow); }
+  .stakeholder-card.blocker::before { background: var(--red); }
+  .stakeholder-card.unknown::before { background: var(--muted); }
+  .sk-name { font-size: 15px; font-weight: 700; color: var(--white); }
+  .sk-title { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .sk-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .sk-tag { font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 500; }
+  .sk-tag-buyer { background: rgba(240,90,40,0.2); color: var(--orange); }
+  .sk-tag-champion { background: rgba(0,196,140,0.2); color: var(--green); }
+  .sk-tag-evaluator { background: rgba(0,161,224,0.2); color: var(--blue); }
+  .sk-tag-procurement { background: rgba(245,166,35,0.2); color: var(--yellow); }
+  .sk-tag-risk { background: rgba(232,82,74,0.2); color: var(--red); }
+  .sk-engagement { font-size: 11px; color: var(--muted); margin-top: 8px; display: flex; align-items: center; gap: 4px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .dot-green { background: var(--green); }
+  .dot-yellow { background: var(--yellow); }
+  .dot-red { background: var(--red); }
+  .dot-grey { background: var(--muted); }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--navy); color: var(--text); padding: 10px 12px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* MEDDPICC */
+  .medd-item { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+  .medd-letter { font-size: 28px; font-weight: 800; color: var(--orange); float: left; margin-right: 14px; line-height: 1; }
+  .medd-title { font-size: 15px; font-weight: 700; color: var(--white); }
+  .medd-subtitle { font-size: 12px; color: var(--orange); margin-bottom: 8px; }
+  .medd-body { font-size: 13px; color: var(--text); line-height: 1.6; clear: both; }
+  .medd-score { float: right; }
+  .score-bar { height: 6px; background: var(--border); border-radius: 3px; width: 120px; margin-top: 4px; }
+  .score-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--orange), var(--yellow)); }
+
+  /* ORG CHART */
+  .org-chart { overflow-x: auto; padding: 20px 0; }
+  .org-node { display: inline-block; background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; text-align: center; min-width: 140px; max-width: 160px; cursor: default; transition: all 0.2s; }
+  .org-node:hover { border-color: var(--orange); background: rgba(240,90,40,0.08); }
+  .org-node.exec { border-color: var(--orange); background: rgba(240,90,40,0.12); }
+  .org-node.buyer { border-color: var(--red); background: rgba(232,82,74,0.12); }
+  .org-node.champion { border-color: var(--green); background: rgba(0,196,140,0.12); }
+  .org-node.procurement { border-color: var(--yellow); background: rgba(245,166,35,0.12); }
+  .org-node.blank { opacity: 0; pointer-events: none; }
+  .org-name { font-size: 12px; font-weight: 700; color: var(--white); }
+  .org-title { font-size: 10px; color: var(--muted); margin-top: 2px; line-height: 1.3; }
+  .org-status { font-size: 10px; margin-top: 4px; }
+  .org-level { display: flex; justify-content: center; gap: 12px; margin: 8px 0; }
+  .org-connector { display: flex; justify-content: center; }
+  .org-connector svg { display: block; }
+  .org-tree { text-align: center; }
+  .org-row { display: flex; justify-content: center; align-items: flex-start; gap: 0; }
+  .org-branch { display: flex; flex-direction: column; align-items: center; margin: 0 6px; }
+  .vert-line { width: 2px; height: 20px; background: var(--border); }
+  .horiz-container { display: flex; align-items: flex-start; position: relative; }
+  .horiz-line { height: 2px; background: var(--border); position: absolute; top: 0; }
+
+  /* RISK/INITIATIVE ITEMS */
+  .initiative { background: var(--card2); border-left: 4px solid var(--blue); border-radius: 0 8px 8px 0; padding: 14px 16px; margin-bottom: 12px; }
+  .initiative.high { border-left-color: var(--orange); }
+  .initiative.med { border-left-color: var(--yellow); }
+  .initiative-title { font-size: 14px; font-weight: 700; color: var(--white); }
+  .initiative-body { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+  .initiative-tags { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .pv-align { background: rgba(240,90,40,0.08); border: 1px solid rgba(240,90,40,0.3); border-radius: 6px; padding: 10px 12px; margin-top: 10px; }
+  .pv-align-label { font-size: 11px; font-weight: 700; color: var(--orange); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .pv-align-label::before { content: '⬡'; font-size: 12px; }
+  .pv-align-body { font-size: 12px; color: var(--text); line-height: 1.55; }
+  .pv-align-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+  .pv-pill { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; background: rgba(240,90,40,0.15); color: var(--orange); border: 1px solid rgba(240,90,40,0.4); }
+  .align-matrix { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .align-matrix th { background: var(--navy); color: var(--text); padding: 10px 12px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .align-matrix td { padding: 12px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; line-height: 1.55; }
+  .align-matrix tr:hover td { background: rgba(255,255,255,0.02); }
+  .align-matrix .initiative-col { font-weight: 600; color: var(--white); width: 22%; }
+  .align-matrix .product-col { color: var(--orange); font-weight: 600; width: 20%; }
+  .align-matrix .message-col { color: var(--text); width: 58%; }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .timeline-item { position: relative; margin-bottom: 20px; }
+  .timeline-item::before { content: ''; position: absolute; left: -20px; top: 4px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--orange); background: var(--bg); }
+  .timeline-item.done::before { background: var(--green); border-color: var(--green); }
+  .timeline-item.active-step::before { background: var(--orange); border-color: var(--orange); box-shadow: 0 0 8px var(--orange); }
+  .timeline-date { font-size: 11px; color: var(--orange); font-weight: 600; }
+  .timeline-title { font-size: 14px; font-weight: 600; color: var(--white); margin-top: 2px; }
+  .timeline-body { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+
+  /* EMAIL OUTREACH */
+  .email-item { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
+  .email-header { padding: 14px 16px; background: rgba(27,58,107,0.5); display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .email-header:hover { background: rgba(27,58,107,0.7); }
+  .email-to { font-size: 13px; font-weight: 700; color: var(--white); }
+  .email-subject { font-size: 12px; color: var(--blue); margin-top: 2px; }
+  .email-toggle { color: var(--muted); font-size: 18px; transition: transform 0.2s; }
+  .email-body { padding: 16px; display: none; border-top: 1px solid var(--border); }
+  .email-body.open { display: block; }
+  .email-text { font-size: 13px; line-height: 1.8; color: var(--text); white-space: pre-wrap; }
+  .talk-track { background: rgba(0,161,224,0.08); border: 1px solid rgba(0,161,224,0.3); border-radius: 6px; padding: 14px; margin-top: 14px; }
+  .talk-track-label { font-size: 11px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .talk-track-text { font-size: 13px; line-height: 1.8; color: var(--text); white-space: pre-wrap; }
+
+  /* LIVE FEED */
+  .news-card { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; gap: 14px; }
+  .news-card:hover { border-color: var(--blue); }
+  .news-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); margin-top: 5px; flex-shrink: 0; }
+  .news-title { font-size: 14px; font-weight: 600; color: var(--white); }
+  .news-title a { color: var(--white); text-decoration: none; }
+  .news-title a:hover { color: var(--blue); }
+  .news-meta { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .news-summary { font-size: 13px; color: var(--text); margin-top: 8px; line-height: 1.6; }
+
+  /* COMPETITIVE */
+  .comp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .comp-card { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .comp-name { font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 12px; }
+  .comp-row { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center; }
+  .comp-label { font-size: 12px; color: var(--muted); }
+  .comp-val { font-size: 12px; font-weight: 600; }
+  .bar-wrap { background: var(--border); border-radius: 3px; height: 5px; width: 80px; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .bar-pv { background: var(--orange); }
+  .bar-ms { background: #00B4D8; }
+  .bar-or { background: #C41E3A; }
+  .win-tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 12px; margin-top: 8px; }
+  .win-pv { background: rgba(240,90,40,0.2); color: var(--orange); }
+  .win-risk { background: rgba(232,82,74,0.2); color: var(--red); }
+
+  /* VALUE HYP */
+  .vh-item { background: var(--card2); border-left: 4px solid var(--green); border-radius: 0 8px 8px 0; padding: 14px 16px; margin-bottom: 12px; }
+  .vh-title { font-size: 14px; font-weight: 700; color: var(--white); }
+  .vh-body { font-size: 13px; color: var(--text); margin-top: 6px; line-height: 1.6; }
+
+  /* MISC */
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .pill-red { background: rgba(232,82,74,0.2); color: var(--red); }
+  .pill-green { background: rgba(0,196,140,0.2); color: var(--green); }
+  .pill-yellow { background: rgba(245,166,35,0.2); color: var(--yellow); }
+  .pill-blue { background: rgba(0,161,224,0.2); color: var(--blue); }
+  .pill-orange { background: rgba(240,90,40,0.2); color: var(--orange); }
+  .note { background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.3); border-radius: 6px; padding: 12px 16px; font-size: 13px; color: var(--text); line-height: 1.6; margin-bottom: 14px; }
+  .alert { background: rgba(232,82,74,0.08); border: 1px solid rgba(232,82,74,0.3); border-radius: 6px; padding: 12px 16px; font-size: 13px; color: var(--text); line-height: 1.6; margin-bottom: 14px; }
+  .alert strong, .note strong { color: var(--yellow); }
+  ul.bullet { padding-left: 20px; }
+  ul.bullet li { margin-bottom: 6px; font-size: 13px; color: var(--text); line-height: 1.6; }
+  .flex-gap { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+  .last-updated { font-size: 11px; color: var(--muted); text-align: right; padding: 8px 24px; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">
+    <span>PLANVIEW</span>
+  </div>
+  <div class="header-content">
+    <div>
+      <div class="header-title">VISA INC. &nbsp;<span>Account Plan</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px;">Strategic Account Executive: Larry Bonham &nbsp;|&nbsp; Enterprise West</div>
+    </div>
+    <div class="header-meta">
+      <span class="badge badge-orange">Stage: Late Evaluation</span>
+      <span class="badge badge-green">$1.7M ACV &bull; 3-Yr Term</span>
+      <span class="badge badge-blue">Clarity Replacement</span>
+      <span class="badge badge-red">Critical: Exec Access Gap</span>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('overview')"><span class="tab-icon">🏢</span>Account Overview</div>
+  <div class="tab" onclick="showTab('initiatives')"><span class="tab-icon">🎯</span>Strategic Initiatives</div>
+  <div class="tab" onclick="showTab('orgchart')"><span class="tab-icon">👥</span>Org Chart</div>
+  <div class="tab" onclick="showTab('meddpicc')"><span class="tab-icon">📊</span>MEDDPICC</div>
+  <div class="tab" onclick="showTab('value')"><span class="tab-icon">💡</span>Value Hypothesis</div>
+  <div class="tab" onclick="showTab('competitive')"><span class="tab-icon">⚔️</span>Competitive</div>
+  <div class="tab" onclick="showTab('outreach')"><span class="tab-icon">📧</span>Outreach Playbook</div>
+  <div class="tab" onclick="showTab('timeline')"><span class="tab-icon">📅</span>Deal Timeline</div>
+  <div class="tab" onclick="showTab('livefeed')"><span class="tab-icon">📡</span>Live Feed</div>
+</div>
+
+<!-- ==================== TAB: OVERVIEW ==================== -->
+<div class="content active" id="tab-overview">
+  <div class="grid-4" style="margin-bottom:20px;">
+    <div class="stat-card">
+      <div class="stat-val">$1.7M</div>
+      <div class="stat-label">ACV Target</div>
+      <div class="stat-sub">3-year term · $5.1M TCV</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--red);">2</div>
+      <div class="stat-label">Key Execs Unreached</div>
+      <div class="stat-sub">Trinath Anaparthi · Rajat Taneja</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--blue);">3</div>
+      <div class="stat-label">Groups Evaluating</div>
+      <div class="stat-sub">Value Services · GPC · Tech</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--yellow);">2</div>
+      <div class="stat-label">Competitors Active</div>
+      <div class="stat-sub">Microsoft · Oracle</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:20px;">
+    <div class="card">
+      <div class="card-header">Account Snapshot</div>
+      <table>
+        <tr><td style="color:var(--muted);width:38%">Company</td><td><strong>Visa Inc. (NYSE: V)</strong></td></tr>
+        <tr><td style="color:var(--muted)">HQ</td><td>Foster City, CA (moving to San Francisco)</td></tr>
+        <tr><td style="color:var(--muted)">Revenue (FY2025)</td><td><strong>$34.6B</strong> &nbsp;·&nbsp; 69% operating margin</td></tr>
+        <tr><td style="color:var(--muted)">Employees</td><td>~30,305 globally</td></tr>
+        <tr><td style="color:var(--muted)">Industry</td><td>Global Digital Payments / IT Services</td></tr>
+        <tr><td style="color:var(--muted)">CEO</td><td>Ryan McInerney</td></tr>
+        <tr><td style="color:var(--muted)">President, Tech</td><td>Rajat Taneja</td></tr>
+        <tr><td style="color:var(--muted)">SF Account ID</td><td><code style="font-size:12px;color:var(--blue)">0014100000UC8NjAAL</code></td></tr>
+        <tr><td style="color:var(--muted)">Relationship</td><td><span class="pill pill-yellow">Former Customer</span></td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-header">The Opportunity</div>
+      <div class="initiative high" style="margin-bottom:12px;">
+        <div class="initiative-title">Clarity (Broadcom/CA PPM) Replacement</div>
+        <div class="initiative-body">Visa is actively replacing CA Clarity with a modern PPM/SPM platform. Planview PPM Pro is in late-stage evaluation competing against Microsoft Project and Oracle. The initiative spans three Visa groups: Value Services, GPC, and Technology — each with different stakeholder opinions, creating a complex multi-threaded sale.</div>
+        <div class="initiative-tags">
+          <span class="badge badge-orange">$1.7M ACV</span>
+          <span class="badge badge-blue">3-Year Term</span>
+          <span class="badge badge-green">$5.1M TCV</span>
+        </div>
+      </div>
+      <div class="alert"><strong>Critical Risk:</strong> The key economic buyer, Trinath Anaparthi (CIO/SVP Operations), and Rajat Taneja (President, Technology) have not yet been reached directly. Recent Visa reorganizations have disrupted existing relationships. AWS (Justin Gatlin) and EY (Gary Capriotti) are being leveraged to establish this exec connection.</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header">Planview Alliance Team</div>
+      <table>
+        <tr><td style="color:var(--muted)">AE</td><td><strong>Larry Bonham</strong><br><span style="font-size:11px;color:var(--muted)">Strategic AE, Enterprise West<br>(650) 906-9524 · lbonham@planview.com</span></td></tr>
+        <tr><td style="color:var(--muted)">AWS Alliance</td><td><strong>Justin Gatlin</strong><br><span style="font-size:11px;color:var(--muted)">Global AWS Alliance Director<br>(704) 954-4594</span></td></tr>
+        <tr><td style="color:var(--muted)">AWS Contact</td><td><strong>Connor Roche</strong> &amp; <strong>Margaret McEntee</strong><br><span style="font-size:11px;color:var(--muted)">Amazon — coroche@amazon.com</span></td></tr>
+        <tr><td style="color:var(--muted)">EY Partner</td><td><strong>Gary Capriotti</strong><br><span style="font-size:11px;color:var(--muted)">EY Manager, FSO BCF Planning &amp; Profitability</span></td></tr>
+        <tr><td style="color:var(--muted)">Planview SE</td><td><strong>Anthony Cessario</strong><br><span style="font-size:11px;color:var(--muted)">anthony.cessario@planview.com</span></td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Active Visa Contacts</div>
+      <table>
+        <tr><td><strong>Victor Kapadia</strong><br><span style="font-size:11px;color:var(--muted)">vkapadia@visa.com · Technical Lead</span></td><td><span class="pill pill-green">Active</span></td></tr>
+        <tr><td><strong>Beau Brundrett</strong><br><span style="font-size:11px;color:var(--muted)">bbrundre@visa.com · Dir. Strategic Sourcing<br>(512) 865-2329</span></td><td><span class="pill pill-green">Active</span></td></tr>
+        <tr><td><strong>Jason Mahvash</strong><br><span style="font-size:11px;color:var(--muted)">jmahvash@visa.com · Procurement</span></td><td><span class="pill pill-green">Active</span></td></tr>
+        <tr><td><strong>Sangeeta Aryasomayajula</strong><br><span style="font-size:11px;color:var(--muted)">Dir. Enterprise Solutions &amp; AI</span></td><td><span class="pill pill-blue">In Progress</span></td></tr>
+        <tr><td><strong>Trinath Anaparthi</strong><br><span style="font-size:11px;color:var(--muted)">CIO / SVP Operations — Economic Buyer</span></td><td><span class="pill pill-red">No Contact</span></td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Next Steps &amp; Action Items</div>
+      <div class="timeline">
+        <div class="timeline-item active-step">
+          <div class="timeline-date">IMMEDIATE</div>
+          <div class="timeline-title">Establish Trinath Anaparthi Connection</div>
+          <div class="timeline-body">Leverage AWS (Connor Roche) and EY (Gary Capriotti / Puneet) to reach SVP CIO. Critical path to close.</div>
+        </div>
+        <div class="timeline-item active-step">
+          <div class="timeline-date">THIS WEEK</div>
+          <div class="timeline-title">Beau Brundrett Status Meeting</div>
+          <div class="timeline-body">Meeting confirmed with Visa Sourcing to discuss Clarity replacement initiative status.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">NEAR-TERM</div>
+          <div class="timeline-title">Final Pricing Working Session</div>
+          <div class="timeline-body">Planview CEO has had positive senior exec meetings. Final session on pricing and commercials planned.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">NEAR-TERM</div>
+          <div class="timeline-title">AWS Marketplace Positioning</div>
+          <div class="timeline-body">Position Planview on AWS Marketplace to leverage Visa's AWS spend commitments and accelerate procurement.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">TARGET</div>
+          <div class="timeline-title">Contract Closure</div>
+          <div class="timeline-body">Mutual close plan required. Final vendor selection expected following executive review.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB: STRATEGIC INITIATIVES ==================== -->
+<div class="content" id="tab-initiatives">
+  <div class="note"><strong>Context:</strong> Visa's external transformation agenda (AI commerce, stablecoins, B2B payments) directly pressures internal execution infrastructure. The Clarity PPM replacement is Visa's internal response to needing better portfolio visibility as it executes on these high-stakes initiatives simultaneously.</div>
+
+  <div class="section-title">Visa Corporate Strategic Initiatives (2025–2026)</div>
+
+  <div class="grid-2">
+    <div>
+      <div class="initiative high">
+        <div class="initiative-title">1. Visa Intelligent Commerce — AI-First Payments</div>
+        <div class="initiative-body">Visa opened its payments network to developers building AI agent commerce. Strategic partnerships with OpenAI, Microsoft, and Anthropic enable AI agents to autonomously execute payments. Full commercial deployment targeted Q1 2026. This is Visa's most publicized transformation initiative and defines the urgency of internal execution capacity.</div>
+        <div class="initiative-tags"><span class="badge badge-orange">Executive Priority</span><span class="badge badge-blue">2026 Deadline</span></div>
+        <div class="pv-align">
+          <div class="pv-align-label">Planview Alignment</div>
+          <div class="pv-align-body">Intelligent Commerce requires coordinating dozens of parallel product and engineering workstreams across GPC, Value Services, and Tech under a hard 2026 deadline. Planview Portfolios gives Trinath and his leadership team real-time visibility into which AI commerce programs are on track, which are resource-starved, and which are at risk of missing the commercial window. Without that visibility, the board-level narrative on AI execution is built on spreadsheets.</div>
+          <div class="pv-align-pills"><span class="pv-pill">Planview Portfolios</span><span class="pv-pill">PPM Pro</span><span class="pv-pill">Planview Anvi AI</span></div>
+        </div>
+      </div>
+
+      <div class="initiative high">
+        <div class="initiative-title">2. Value-Added Services (VAS) Expansion to 50% of Revenue</div>
+        <div class="initiative-body">Visa targets VAS and new flows (B2B, government, cross-border) to represent 50% of total revenue by 2026, up from ~30%. This requires massive portfolio prioritization across product, technology, and go-to-market functions — a direct driver for improved SPM governance and resource allocation capability.</div>
+        <div class="initiative-tags"><span class="badge badge-orange">Revenue Critical</span><span class="badge badge-green">Portfolio Impact</span></div>
+        <div class="pv-align">
+          <div class="pv-align-label">Planview Alignment</div>
+          <div class="pv-align-body">Growing VAS from 30% to 50% of revenue means Visa must place disciplined portfolio bets across dozens of competing product investments. Planview's Strategic Portfolio Management capability gives finance and technology leadership the tools to model investment scenarios, align resources to strategic priorities, and cut underperforming programs before they consume runway. This is the core SPM use case for Murali Mareedu, Murali Sreenivasan, and Deirdre Sawyer's evaluation teams.</div>
+          <div class="pv-align-pills"><span class="pv-pill">Planview Portfolios (SPM)</span><span class="pv-pill">AdaptiveWork</span><span class="pv-pill">Scenario Planning</span></div>
+        </div>
+      </div>
+
+      <div class="initiative">
+        <div class="initiative-title">3. VCS Hub — AI-Powered B2B Payables Platform</div>
+        <div class="initiative-body">Launched Sept 2025, the VCS Hub targets the $145 trillion B2B market with embedded AI payables. This platform requires coordinated technology delivery across multiple engineering groups — precisely the type of multi-group program management Planview PPM governs.</div>
+        <div class="initiative-tags"><span class="badge badge-blue">Launched Sept 2025</span></div>
+        <div class="pv-align">
+          <div class="pv-align-label">Planview Alignment</div>
+          <div class="pv-align-body">VCS Hub delivery requires synchronized execution across engineering, product, and go-to-market workstreams spanning multiple Visa business units. PPM Pro provides the program-level dependency mapping, milestone tracking, and resource capacity planning needed to keep a platform of this complexity on schedule. Victor Kapadia's technical evaluation directly covers this use case.</div>
+          <div class="pv-align-pills"><span class="pv-pill">PPM Pro</span><span class="pv-pill">AgilePlace</span><span class="pv-pill">Dependency Management</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="initiative med">
+        <div class="initiative-title">4. Stablecoin &amp; Cross-Border Innovation</div>
+        <div class="initiative-body">Visa launched a stablecoin prefunding pilot via Visa Direct at SIBOS 2025. Cross-border transaction volumes grew 13% in Q2 2025. These innovation bets require disciplined portfolio trade-off decisions — which products get funded when everything feels urgent.</div>
+        <div class="initiative-tags"><span class="badge badge-blue">SIBOS 2025</span></div>
+        <div class="pv-align">
+          <div class="pv-align-label">Planview Alignment</div>
+          <div class="pv-align-body">Stablecoin and cross-border innovation are high-risk, high-reward bets that compete for the same engineering and product resources as core network initiatives. Planview's investment and capacity planning tools let Visa model the trade-off: how much runway can stablecoin get without cannibalizing the AI commerce deadline? That answer cannot come from CA Clarity.</div>
+          <div class="pv-align-pills"><span class="pv-pill">Planview Portfolios</span><span class="pv-pill">Capacity Planning</span><span class="pv-pill">Investment Scenarios</span></div>
+        </div>
+      </div>
+
+      <div class="initiative med">
+        <div class="initiative-title">5. Authorize.net Reimagination</div>
+        <div class="initiative-body">Complete redesign of the Authorize.net platform with AI-powered merchant insights and Tap-to-Phone capability. Domestic launch Q2 2025, global 2026. Represents a major product portfolio initiative requiring engineering resource coordination across GPC and Tech.</div>
+        <div class="initiative-tags"><span class="badge badge-green">In Flight</span></div>
+        <div class="pv-align">
+          <div class="pv-align-label">Planview Alignment</div>
+          <div class="pv-align-body">The Authorize.net global rollout in 2026 depends on GPC and Tech engineering teams delivering in concert with a product roadmap that spans multiple geographies and merchant segments. AgilePlace provides the lean-agile delivery framework to manage this at scale, while PPM Pro tracks cross-team dependencies against global launch milestones. Ritu Nair's Developer Experience org is a direct beneficiary.</div>
+          <div class="pv-align-pills"><span class="pv-pill">AgilePlace</span><span class="pv-pill">PPM Pro</span><span class="pv-pill">Delivery Execution</span></div>
+        </div>
+      </div>
+
+      <div class="initiative high">
+        <div class="initiative-title">6. Internal PPM Modernization — Clarity Replacement (THE OPPORTUNITY)</div>
+        <div class="initiative-body">CA Clarity (Broadcom) is Visa's current PPM platform. It no longer meets the demands of Visa's scale, agile delivery model, or cross-functional portfolio governance needs. Visa issued a formal RFP in Q2 2025 evaluating Planview, Microsoft, and Oracle. The initiative is active with Planview in late-stage evaluation. Groups involved: <strong>Value Services, GPC, and Technology</strong>.</div>
+        <div class="initiative-tags"><span class="badge badge-orange">ACTIVE OPPORTUNITY</span><span class="badge badge-red">Late Stage</span><span class="badge badge-green">Q2 2025 RFP</span></div>
+        <div class="pv-align">
+          <div class="pv-align-label">Planview Alignment — Direct Displacement Win</div>
+          <div class="pv-align-body">This is the primary commercial motion. Planview replaces CA Clarity end-to-end: PPM Pro for project and program execution, Planview Portfolios for strategic investment governance, and AgilePlace for lean-agile delivery teams. The full platform bundle at $1.7M ACV on a 3-year term delivers a unified SPM capability that neither Microsoft Project nor Oracle PPM can match at Visa's multi-group scale. AWS Marketplace accelerates procurement by consuming committed cloud spend, removing a key commercial friction point for Beau Brundrett's sourcing team.</div>
+          <div class="pv-align-pills"><span class="pv-pill">PPM Pro</span><span class="pv-pill">Planview Portfolios</span><span class="pv-pill">AgilePlace</span><span class="pv-pill">Planview Anvi AI</span><span class="pv-pill">AWS Marketplace</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="section-title">Planview Alignment Summary — Visa Strategic Initiatives</div>
+  <div class="card" style="margin-bottom:24px;overflow-x:auto;">
+    <table class="align-matrix">
+      <thead>
+        <tr>
+          <th>Visa Initiative</th>
+          <th>Planview Product</th>
+          <th>How Planview Enables It</th>
+          <th style="width:12%;text-align:center;">Relevance</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="initiative-col">Intelligent Commerce AI</td>
+          <td class="product-col">Portfolios + PPM Pro + Anvi AI</td>
+          <td class="message-col">Real-time portfolio visibility across 20+ parallel AI commerce workstreams. Planview Anvi AI surfaces delivery risk before it becomes an executive escalation.</td>
+          <td style="text-align:center;"><span class="badge badge-orange">Critical</span></td>
+        </tr>
+        <tr>
+          <td class="initiative-col">VAS 50% Revenue Target</td>
+          <td class="product-col">Portfolios (SPM) + AdaptiveWork</td>
+          <td class="message-col">Investment scenario modeling and capacity alignment so finance and tech leadership can prioritize which VAS bets get funded and which get deferred — replacing subjective QBR debates with data.</td>
+          <td style="text-align:center;"><span class="badge badge-orange">Critical</span></td>
+        </tr>
+        <tr>
+          <td class="initiative-col">VCS Hub B2B Platform</td>
+          <td class="product-col">PPM Pro + AgilePlace</td>
+          <td class="message-col">Cross-group program dependency management and agile delivery execution for a multi-team platform launch. Prevents cross-team bottlenecks from delaying the $145T market opportunity.</td>
+          <td style="text-align:center;"><span class="badge badge-blue">High</span></td>
+        </tr>
+        <tr>
+          <td class="initiative-col">Stablecoin and Cross-Border</td>
+          <td class="product-col">Portfolios + Capacity Planning</td>
+          <td class="message-col">Trade-off modeling to balance innovation investment against core network delivery commitments. Gives leadership a defensible answer to: how much can we fund stablecoin without breaking AI commerce timelines?</td>
+          <td style="text-align:center;"><span class="badge badge-blue">High</span></td>
+        </tr>
+        <tr>
+          <td class="initiative-col">Authorize.net Reimagination</td>
+          <td class="product-col">AgilePlace + PPM Pro</td>
+          <td class="message-col">Lean-agile delivery at scale across GPC and Tech for a global product rollout. Milestone tracking and team-level delivery visibility for Ritu Nair's Developer Experience organization.</td>
+          <td style="text-align:center;"><span class="badge badge-blue">High</span></td>
+        </tr>
+        <tr>
+          <td class="initiative-col">Clarity PPM Replacement</td>
+          <td class="product-col">Full Platform Bundle</td>
+          <td class="message-col">End-to-end displacement of CA Clarity with PPM Pro + Portfolios + AgilePlace. $1.7M ACV / 3yr. AWS Marketplace path removes procurement friction. Only Planview unifies SPM, PPM, and agile delivery in a single platform.</td>
+          <td style="text-align:center;"><span class="badge badge-orange">THE WIN</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider">
+  <div class="section-title">Business Risks &amp; Pain Points Tied to Planview</div>
+  <div class="grid-3">
+    <div class="card2">
+      <div class="card-header">Execution Credibility Risk</div>
+      <p style="font-size:13px;line-height:1.6;">With 5+ simultaneous transformation bets and aggressive 2026 revenue targets, Visa's leadership faces intense board scrutiny on execution. CA Clarity's inability to provide real-time portfolio status, dynamic reprioritization, and cross-group visibility creates credibility risk at every QBR.</p>
+    </div>
+    <div class="card2">
+      <div class="card-header">Multi-Group Alignment Gaps</div>
+      <p style="font-size:13px;line-height:1.6;">Value Services, GPC, and Tech each use different planning processes. Without a unified platform, resource contention, shadow IT, and subjective prioritization ("loudest voice wins") erode confidence in the portfolio. This is particularly acute as Visa scales its AI commerce investments.</p>
+    </div>
+    <div class="card2">
+      <div class="card-header">Regulatory &amp; Cybersecurity Pressure</div>
+      <p style="font-size:13px;line-height:1.6;">Visa's 10-K (FY2025) cites cybersecurity and technology investment governance as key enterprise risks. The board-level audit and risk committee has direct oversight of technology program risk. Poor portfolio visibility amplifies the board's exposure to unresolved program risks.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB: ORG CHART ==================== -->
+<div class="content" id="tab-orgchart">
+  <div class="flex-gap">
+    <span class="pill pill-orange" style="padding:5px 12px;">■ Economic Buyer</span>
+    <span class="pill pill-green" style="padding:5px 12px;">■ Champion / Engaged</span>
+    <span class="pill pill-blue" style="padding:5px 12px;">■ Evaluator</span>
+    <span class="pill pill-yellow" style="padding:5px 12px;">■ Procurement</span>
+    <span class="pill pill-red" style="padding:5px 12px;">■ No Contact</span>
+  </div>
+
+  <div class="org-chart">
+    <!-- LEVEL 0: Rajat Taneja -->
+    <div class="org-level">
+      <div class="org-branch">
+        <div class="org-node exec">
+          <div class="org-name">Rajat Taneja</div>
+          <div class="org-title">President, Technology</div>
+          <div class="org-status"><span class="pill pill-red">No Contact</span></div>
+        </div>
+        <div class="vert-line"></div>
+      </div>
+    </div>
+
+    <!-- LEVEL 1: Direct Reports to Rajat -->
+    <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:8px;">
+      <div class="org-branch">
+        <div class="org-node buyer">
+          <div class="org-name">Trinath Anaparthi</div>
+          <div class="org-title">CIO / SVP Operations</div>
+          <div class="org-status"><span class="pill pill-red">Economic Buyer — No Contact</span></div>
+        </div>
+        <div class="vert-line"></div>
+      </div>
+      <div class="org-branch">
+        <div class="org-node champion">
+          <div class="org-name">Ritu Nair</div>
+          <div class="org-title">VP Developer Experience</div>
+          <div class="org-status"><span class="pill pill-green">Decision Maker DPD — Engaged</span></div>
+        </div>
+        <div class="vert-line"></div>
+      </div>
+      <div class="org-branch">
+        <div class="org-node procurement">
+          <div class="org-name">Mariko Sola</div>
+          <div class="org-title">Global Strategic Sourcing Exec</div>
+          <div class="org-status"><span class="pill pill-red">No Contact</span></div>
+        </div>
+        <div class="vert-line"></div>
+      </div>
+    </div>
+
+    <!-- LEVEL 2: Reports to Trinath -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:8px;">── Reports to Trinath Anaparthi ──</div>
+      <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+        <div class="org-node champion">
+          <div class="org-name">Deirdre (Dee) Sawyer</div>
+          <div class="org-title">Sr. Dir. Corporate Marketing</div>
+          <div class="org-status"><span class="pill pill-green">Evaluator — Engaged</span></div>
+        </div>
+        <div class="org-node champion">
+          <div class="org-name">Murali Mareedu</div>
+          <div class="org-title">Sr. Director PMO (Finance)</div>
+          <div class="org-status"><span class="pill pill-green">Evaluator — Engaged</span></div>
+        </div>
+        <div class="org-node champion">
+          <div class="org-name">Murali Sreenivasan</div>
+          <div class="org-title">Sr. Director PMO (Finance)</div>
+          <div class="org-status"><span class="pill pill-green">Evaluator — Engaged</span></div>
+        </div>
+        <div class="org-node">
+          <div class="org-name">Gary Slater</div>
+          <div class="org-title">VP Operations</div>
+          <div class="org-status"><span class="pill pill-yellow">Identified</span></div>
+        </div>
+        <div class="org-node">
+          <div class="org-name">Giovana Muller</div>
+          <div class="org-title">VP Corporate Technology Support</div>
+          <div class="org-status"><span class="pill pill-yellow">Identified</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEVEL 2: Reports to Ritu Nair -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:8px;">── Reports to Ritu Nair ──</div>
+      <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+        <div class="org-node champion">
+          <div class="org-name">Sangeeta Aryasomayajula</div>
+          <div class="org-title">Dir. Enterprise Solutions &amp; AI</div>
+          <div class="org-status"><span class="pill pill-green">Evaluator — Engaged</span></div>
+        </div>
+        <div class="org-node">
+          <div class="org-name">Doreen Waver</div>
+          <div class="org-title">VP Digital Enablement Solutions</div>
+          <div class="org-status"><span class="pill pill-yellow">Identified</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEVEL 2: Reports to Mariko Sola (Procurement) -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:8px;">── Procurement (Reports to Mariko Sola) ──</div>
+      <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+        <div class="org-node procurement">
+          <div class="org-name">Beau Brundrett</div>
+          <div class="org-title">Dir. Strategic Sourcing</div>
+          <div class="org-status"><span class="pill pill-green">Procurement SPM — Engaged</span></div>
+        </div>
+        <div class="org-node procurement">
+          <div class="org-name">Carson Barr</div>
+          <div class="org-title">Dir. Strategic Sourcing</div>
+          <div class="org-status"><span class="pill pill-green">Procurement DPD — Engaged</span></div>
+        </div>
+        <div class="org-node procurement">
+          <div class="org-name">Jason Mahvash</div>
+          <div class="org-title">Procurement</div>
+          <div class="org-status"><span class="pill pill-green">Engaged</span></div>
+        </div>
+        <div class="org-node procurement">
+          <div class="org-name">Jonah Jose</div>
+          <div class="org-title">Sr. Sourcing Manager</div>
+          <div class="org-status"><span class="pill pill-green">Engaged</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEVEL 3: Reports to Deirdre -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:8px;">── Reports to Deirdre Sawyer ──</div>
+      <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+        <div class="org-node">
+          <div class="org-name">CT Ansted</div>
+          <div class="org-title">Head of Product Management</div>
+          <div class="org-status"><span class="pill pill-yellow">Identified</span></div>
+        </div>
+        <div class="org-node champion">
+          <div class="org-name">Avinash Takale</div>
+          <div class="org-title">MC from Infosys</div>
+          <div class="org-status"><span class="pill pill-green">Engaged — Meeting</span></div>
+        </div>
+        <div class="org-node champion">
+          <div class="org-name">Patil Bajirao</div>
+          <div class="org-title">Staff S/W Engineer</div>
+          <div class="org-status"><span class="pill pill-green">Evaluator SPM — Engaged</span></div>
+        </div>
+        <div class="org-node">
+          <div class="org-name">Sid Sudarshan</div>
+          <div class="org-title">Product Management</div>
+          <div class="org-status"><span class="pill pill-red">No Contact</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional contacts -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:8px;">── Other Key Contacts ──</div>
+      <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+        <div class="org-node champion">
+          <div class="org-name">Victor Kapadia</div>
+          <div class="org-title">Technical Lead (vkapadia@visa.com)</div>
+          <div class="org-status"><span class="pill pill-green">Engaged — Email</span></div>
+        </div>
+        <div class="org-node">
+          <div class="org-name">Sunita Gulati</div>
+          <div class="org-title">Sr. Director PMO</div>
+          <div class="org-status"><span class="pill pill-yellow">Identified</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="section-title">EY Network Intelligence (as of April 14, 2026)</div>
+  <div class="card2">
+    <ul class="bullet">
+      <li><strong>Puneet (Visa)</strong> met with EY on 3/27. He does NOT have direct access to Trinath Anaparthi or Rajat Taneja due to recent Visa reorganizations.</li>
+      <li>Puneet was scheduled to meet with <strong>Sid Sudarshan</strong> in early April to discover more about opportunities.</li>
+      <li>EY's Gary Capriotti is coordinating Visa introductions through existing FS client relationships.</li>
+      <li>AWS's Connor Roche confirmed direct relationship with Beau Brundrett (Procurement) as of April 21, 2026.</li>
+      <li>AWS (Maggie McEntee) has a regular cadence with Trinath — this is the primary exec escalation path.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ==================== TAB: MEDDPICC ==================== -->
+<div class="content" id="tab-meddpicc">
+  <div class="alert"><strong>Overall MEDDPICC Score: 54/100</strong> — The deal has strong metrics and identified decision criteria but suffers from incomplete economic buyer access and no confirmed champion at the executive level. Closing velocity depends on establishing Trinath and Rajat access within days, not weeks.</div>
+
+  <div class="medd-item">
+    <div class="medd-score"><div style="font-size:13px;color:var(--muted);">Score</div><div style="font-size:22px;font-weight:800;color:var(--green);">8/10</div><div class="score-bar"><div class="score-fill" style="width:80%"></div></div></div>
+    <div class="medd-letter">M</div>
+    <div>
+      <div class="medd-title">Metrics</div>
+      <div class="medd-subtitle">Quantified Value &amp; Business Impact</div>
+    </div>
+    <div class="medd-body">
+      Visa's CA Clarity replacement has clear financial metrics: <strong>$1.7M ACV, 3-year term ($5.1M TCV)</strong>. The business value case includes: (1) reduction in manual reporting overhead across 3 groups (Value Services, GPC, Tech); (2) elimination of tool sprawl and shadow IT; (3) faster portfolio reprioritization as Visa pursues 9–12% revenue CAGR targets; (4) improved board-level credibility on execution risk. Planview PPM Demo R2 use cases were developed and submitted to Visa in August 2025, providing concrete ROI anchors.
+    </div>
+  </div>
+
+  <div class="medd-item">
+    <div class="medd-score"><div style="font-size:13px;color:var(--muted);">Score</div><div style="font-size:22px;font-weight:800;color:var(--red);">4/10</div><div class="score-bar"><div class="score-fill" style="width:40%"></div></div></div>
+    <div class="medd-letter">E</div>
+    <div>
+      <div class="medd-title">Economic Buyer</div>
+      <div class="medd-subtitle">Who controls the budget and can say YES?</div>
+    </div>
+    <div class="medd-body">
+      <strong>Trinath Anaparthi (CIO / SVP Operations)</strong> is confirmed as the economic buyer for SPM. He reports to Rajat Taneja (President, Technology). <strong>CRITICAL GAP: No direct contact with either exec.</strong> Post-Visa reorganization, access pathways were disrupted. Active escalation paths: (1) AWS — Maggie McEntee has a regular meeting cadence with Trinath; (2) EY — Gary Capriotti working through Puneet; (3) Planview CEO has already had positive senior exec meetings at Visa — leverage this relationship for a direct Trinath introduction.
+    </div>
+  </div>
+
+  <div class="medd-item">
+    <div class="medd-score"><div style="font-size:13px;color:var(--muted);">Score</div><div style="font-size:22px;font-weight:800;color:var(--yellow);">7/10</div><div class="score-bar"><div class="score-fill" style="width:70%"></div></div></div>
+    <div class="medd-letter">D</div>
+    <div>
+      <div class="medd-title">Decision Criteria</div>
+      <div class="medd-subtitle">What does Visa use to evaluate vendors?</div>
+    </div>
+    <div class="medd-body">
+      Visa issued a formal <strong>PPM RFP in Q2 2025</strong> with a structured scoring matrix (Planview Response - Visa PPM RFP - Q2 2025.xlsx). Key criteria from the RFP include: project phase management, resource management, GPC process use cases (VIK workflow), user persona support, agile/hybrid delivery, reporting, and integration. Planview responded with a detailed scorecard including custom GPC process demo use cases (Demo R2, Aug 2025). Criteria across 3 groups (Value Services, GPC, Tech) may not be fully harmonized — a risk if one group's criteria dominates.
+    </div>
+  </div>
+
+  <div class="medd-item">
+    <div class="medd-score"><div style="font-size:13px;color:var(--muted);">Score</div><div style="font-size:22px;font-weight:800;color:var(--yellow);">6/10</div><div class="score-bar"><div class="score-fill" style="width:60%"></div></div></div>
+    <div class="medd-letter">D</div>
+    <div>
+      <div class="medd-title">Decision Process</div>
+      <div class="medd-subtitle">How will the decision be made and by when?</div>
+    </div>
+    <div class="medd-body">
+      Per email on March 17, 2026: "<em>We expect to be notified of final vendor selection by end of next week</em>" (this has slipped). Decision process: working-level evaluators (Deirdre Sawyer, Murali teams, Sangeeta) compile recommendation → Trinath Anaparthi reviews → Rajat Taneja signs off. Infosys contractor (Avinash Takale) embedded in Deirdre's team is influencing evaluation. No mutual close plan established. Final working session on pricing not yet scheduled.
+    </div>
+  </div>
+
+  <div class="medd-item">
+    <div class="medd-score"><div style="font-size:13px;color:var(--muted);">Score</div><div style="font-size:22px;font-weight:800;color:var(--red);">5/10</div><div class="score-bar"><div class="score-fill" style="width:50%"></div></div></div>
+    <div class="medd-letter">I</div>
+    <div>
+      <div class="medd-title">Identify Pain</div>
+      <div class="medd-subtitle">What is driving urgency for change?</div>
+    </div>
+    <div class="medd-body">
+      Pain is confirmed at the working level but not yet fully articulated at the executive level. Known pain: (1) CA Clarity no longer scales to Visa's portfolio complexity; (2) Multi-group tool sprawl — Value Services, GPC, and Tech each operate with different processes and no unified view; (3) Inability to provide real-time portfolio status to Trinath and Rajat ahead of board reviews; (4) Visa's AI commerce and VAS growth initiatives require faster reprioritization than Clarity allows. <strong>Risk: Urgency may not be felt at the economic buyer level if the status quo feels "good enough."</strong>
+    </div>
+  </div>
+
+  <div class="medd-item">
+    <div class="medd-score"><div style="font-size:13px;color:var(--muted);">Score</div><div style="font-size:22px;font-weight:800;color:var(--yellow);">6/10</div><div class="score-bar"><div class="score-fill" style="width:60%"></div></div></div>
+    <div class="medd-letter">C</div>
+    <div>
+      <div class="medd-title">Champion</div>
+      <div class="medd-subtitle">Who is selling for Planview internally?</div>
+    </div>
+    <div class="medd-body">
+      <strong>Deirdre (Dee) Sawyer</strong> (Sr. Dir. Corporate Marketing) and the Murali duo (PMO, Finance Team) are actively engaged and appear favorably disposed. <strong>Sangeeta Aryasomayajula</strong> (Dir. Enterprise Solutions &amp; AI) is a working-level champion. <strong>Gap: No confirmed executive sponsor selling to Trinath.</strong> Victor Kapadia manages access to Beau Brundrett but is not positioned to drive exec buy-in. Infosys contractor Avinash Takale is embedded in the evaluation — needs to be assessed as friend or foe.
+    </div>
+  </div>
+
+  <div class="medd-item">
+    <div class="medd-score"><div style="font-size:13px;color:var(--muted);">Score</div><div style="font-size:22px;font-weight:800;color:var(--green);">8/10</div><div class="score-bar"><div class="score-fill" style="width:80%"></div></div></div>
+    <div class="medd-letter">C</div>
+    <div>
+      <div class="medd-title">Competition</div>
+      <div class="medd-subtitle">Who else is in the deal?</div>
+    </div>
+    <div class="medd-body">
+      Confirmed competitors: <strong>Microsoft</strong> and <strong>Oracle</strong>. Neither is an AWS solution — noted in emails as a key differentiator for Planview's AWS Marketplace positioning. Microsoft leverages its existing enterprise footprint (Teams, Azure) and Copilot integration narrative. Oracle leverages existing ERP relationships. Planview's differentiation: purpose-built SPM/PPM with Clarity migration expertise, unified strategy-to-delivery visibility, and AWS Marketplace commercial advantage for Visa's cloud spend.
+    </div>
+  </div>
+
+  <div class="medd-item">
+    <div class="medd-score"><div style="font-size:13px;color:var(--muted);">Score</div><div style="font-size:22px;font-weight:800;color:var(--red);">5/10</div><div class="score-bar"><div class="score-fill" style="width:50%"></div></div></div>
+    <div class="medd-letter">P</div>
+    <div>
+      <div class="medd-title">Paper Process</div>
+      <div class="medd-subtitle">What legal/procurement steps are required?</div>
+    </div>
+    <div class="medd-body">
+      Procurement led by Beau Brundrett (Dir. Strategic Sourcing), Mariko Sola (Global Sourcing Exec), Carson Barr, Jonah Jose. Jason Mahvash also engaged. MSA/DPA/InfoSec review process not yet confirmed as initiated. AWS Marketplace route may significantly accelerate this — Planview is available on AWS Marketplace (Clarity SaaS Enterprise PPM listed). Beau Brundrett has existing AWS relationship (Connor Roche confirmed direct contact April 21). <strong>Action: Confirm if Visa's AWS Marketplace commitment can route this transaction.</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB: VALUE HYPOTHESIS ==================== -->
+<div class="content" id="tab-value">
+  <div class="note"><strong>Core Hypothesis:</strong> Visa cannot achieve its 2026 portfolio ambitions — 50% VAS revenue, AI commerce commercialization, and successful internal PPM modernization — if its three largest technology groups continue operating as separate, disconnected portfolio silos with a 20-year-old CA Clarity platform at the center. Planview uniquely unifies strategy, planning, and delivery so that Trinath Anaparthi can walk into every board review with a defensible, real-time view of which initiatives are funded, who owns them, and what they will deliver.</div>
+
+  <div class="section-title">Tailored Value Pillars</div>
+
+  <div class="vh-item">
+    <div class="vh-title">1. Unifying Three Disconnected Groups Around a Single Portfolio Truth</div>
+    <div class="vh-body">Value Services, GPC, and Tech each evaluate Planview through different lenses — and that fragmentation is precisely the problem Planview solves. Unlike Microsoft Project (which serves individual project managers) or Oracle (which serves finance), Planview PPM Pro creates a single portfolio layer that spans all three groups. Trinath Anaparthi gets one dashboard instead of three competing narratives at every QBR. This is not a feature — it is the entire reason the Clarity replacement initiative exists.</div>
+  </div>
+
+  <div class="vh-item">
+    <div class="vh-title">2. Accelerating AI Commerce Execution with Real-Time Portfolio Reprioritization</div>
+    <div class="vh-body">Visa's Intelligent Commerce initiative requires rapid resource reallocation as AI partnership priorities shift with OpenAI, Microsoft, and Anthropic. The current Clarity environment cannot support dynamic scenario modeling — Visa is forced to reprioritize quarterly at best, through manual spreadsheet exercises. Planview's scenario planning and what-if modeling enables Visa to respond to market-driven reprioritization in days, not quarters. This directly supports Rajat Taneja's mandate to accelerate technology delivery velocity.</div>
+  </div>
+
+  <div class="vh-item">
+    <div class="vh-title">3. Defending Resource Allocation with Business Value — Not Political Capital</div>
+    <div class="vh-body">A recurring pain in multi-group portfolio environments is that initiative priority is determined by who argues loudest in the room, not by business value. Planview's value-based scoring framework provides Murali Mareedu and Murali Sreenivasan (Sr. Directors PMO) with the structured methodology to ground every prioritization decision in agreed financial and strategic criteria. This gives Visa's finance teams the confidence to say no to low-value initiatives without political friction.</div>
+  </div>
+
+  <div class="vh-item">
+    <div class="vh-title">4. AWS Marketplace Deployment — Eliminating Procurement Friction</div>
+    <div class="vh-body">Planview is available on AWS Marketplace, enabling Visa to consume Planview through existing AWS contractual commitments — bypassing lengthy MSA/DPA cycles. This is a decisive commercial differentiator vs. Microsoft and Oracle, which cannot offer this path. Given Visa's substantial AWS infrastructure investment and Beau Brundrett's confirmed AWS relationship, this route could compress a 60–90 day procurement process to 2–3 weeks.</div>
+  </div>
+
+  <div class="vh-item">
+    <div class="vh-title">5. Clarity-to-Planview Migration Expertise — Reducing Implementation Risk</div>
+    <div class="vh-body">Planview is the only vendor with dedicated Clarity migration tooling, methodology, and a global ecosystem of certified SIs (Deloitte, Accenture, PWC, Infosys). Given Visa's existing relationship with Infosys (already embedded in the evaluation team as a contractor), Planview's Infosys partnership creates a natural bridge that reduces Visa's implementation risk — a factor Microsoft and Oracle cannot match on a like-for-like basis.</div>
+  </div>
+
+  <hr class="divider">
+  <div class="section-title">Differentiator vs. Microsoft &amp; Oracle</div>
+  <div class="grid-3">
+    <div class="card2">
+      <div class="card-header">Planview vs. Microsoft</div>
+      <ul class="bullet">
+        <li>Microsoft Project is project management, not enterprise portfolio governance</li>
+        <li>No purpose-built SPM layer connecting strategy to delivery</li>
+        <li>Copilot AI narrative is compelling but not yet enterprise-grade in PPM</li>
+        <li>No Clarity migration expertise or tooling</li>
+        <li><strong>Planview wins on:</strong> Portfolio governance depth, Clarity migration, multi-method delivery support</li>
+      </ul>
+    </div>
+    <div class="card2">
+      <div class="card-header">Planview vs. Oracle</div>
+      <ul class="bullet">
+        <li>Oracle Primavera is construction/capital projects — not financial services portfolio management</li>
+        <li>Oracle PPM is ERP-centric, not strategy-led</li>
+        <li>Requires Oracle ERP footprint to maximize value — Visa does not have this</li>
+        <li>Complex, lengthy implementation cycles</li>
+        <li><strong>Planview wins on:</strong> Agile/hybrid delivery, time-to-value, SPM maturity</li>
+      </ul>
+    </div>
+    <div class="card2">
+      <div class="card-header">Planview Unique Advantages</div>
+      <ul class="bullet">
+        <li>Gartner Magic Quadrant Leader for SPM (4th consecutive year, 2025)</li>
+        <li>Forrester SPM Wave Leader (2024)</li>
+        <li>Purpose-built for financial services portfolio complexity</li>
+        <li>AWS Marketplace — commercial acceleration for Visa</li>
+        <li>Planview Anvi AI engine — risk detection and outcome forecasting</li>
+        <li>EY partnership for organizational change management</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB: COMPETITIVE ==================== -->
+<div class="content" id="tab-competitive">
+  <div class="comp-grid">
+    <div class="comp-card" style="border-top:3px solid var(--orange);">
+      <div class="comp-name">🟠 Planview (Us)</div>
+      <div class="comp-row"><div class="comp-label">SPM Depth</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-pv" style="width:95%"></div></div></div></div>
+      <div class="comp-row"><div class="comp-label">Clarity Migration</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-pv" style="width:100%"></div></div></div></div>
+      <div class="comp-row"><div class="comp-label">Agile/Hybrid Support</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-pv" style="width:90%"></div></div></div></div>
+      <div class="comp-row"><div class="comp-label">AWS Marketplace</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-pv" style="width:100%"></div></div></div></div>
+      <div class="comp-row"><div class="comp-label">Time-to-Value</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-pv" style="width:80%"></div></div></div></div>
+      <div class="comp-row"><div class="comp-label">AI/Analytics</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-pv" style="width:85%"></div></div></div></div>
+      <div><span class="win-tag win-pv">Gartner MQ Leader 2025</span></div>
+      <div><span class="win-tag win-pv">Forrester SPM Wave Leader 2024</span></div>
+    </div>
+
+    <div class="comp-card" style="border-top:3px solid #00B4D8;">
+      <div class="comp-name">🔵 Microsoft Project / PPM</div>
+      <div class="comp-row"><div class="comp-label">SPM Depth</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-ms" style="width:40%"></div></div></div></div>
+      <div class="comp-row"><div class="comp-label">Clarity Migration</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-ms" style="width:10%"></div></div></div></div>
+      <div class="comp-row"><div class="comp-label">Agile/Hybrid Support</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-ms" style="width:55%"></div></div></div></div>
+      <div class="comp-row"><div class="comp-label">AWS Marketplace</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-ms" style="width:20%"></div></div></div></div>
+      <div class="comp-row"><div class="comp-label">Time-to-Value</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-ms" style="width:60%"></div></div></div></div>
+      <div class="comp-row"><div class="comp-label">AI/Analytics</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-ms" style="width:75%"></div></div></div></div>
+      <div><span class="win-tag win-risk">Risk: M365 incumbent footprint</span></div>
+      <div><span class="win-tag win-risk">Risk: Copilot AI narrative momentum</span></div>
+    </div>
+
+    <div class="comp-card" style="border-top:3px solid #C41E3A;">
+      <div class="comp-name">🔴 Oracle PPM</div>
+      <div class="comp-row"><div class="comp-label">SPM Depth</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-or" style="width:50%"></div></div></div></div>
+      <div class="comp-row"><div class="comp-label">Clarity Migration</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-or" style="width:15%"></div></div></div></div>
+      <div class="comp-row"><div class="comp-label">Agile/Hybrid Support</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-or" style="width:35%"></div></div></div></div>
+      <div class="comp-row"><div class="comp-label">AWS Marketplace</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-or" style="width:30%"></div></div></div></div>
+      <div class="comp-row"><div class="comp-label">Time-to-Value</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-or" style="width:30%"></div></div></div></div>
+      <div class="comp-row"><div class="comp-label">AI/Analytics</div><div class="comp-val"><div class="bar-wrap"><div class="bar-fill bar-or" style="width:45%"></div></div></div></div>
+      <div><span class="win-tag win-risk">Risk: Oracle ERP relationship at Visa</span></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="section-title">Technology Stack — Current &amp; Displacement</div>
+  <table>
+    <tr><th>Tool / Platform</th><th>Category</th><th>Status</th><th>Planview Displacement</th></tr>
+    <tr><td><strong>CA Clarity (Broadcom)</strong></td><td>PPM / Portfolio Management</td><td><span class="pill pill-red">Being Replaced</span></td><td>Full displacement — Planview PPM Pro</td></tr>
+    <tr><td><strong>Microsoft Project</strong></td><td>Project Management</td><td><span class="pill pill-yellow">Competing for replacement</span></td><td>Displace with Planview PPM Pro + AgilePlace</td></tr>
+    <tr><td><strong>Oracle</strong></td><td>PPM / ERP adjacent</td><td><span class="pill pill-yellow">Competing for replacement</span></td><td>Displace with Planview PPM Pro</td></tr>
+    <tr><td><strong>Infosys (SI Contractor)</strong></td><td>Systems Integrator — embedded</td><td><span class="pill pill-green">Ally / Partner Opportunity</span></td><td>Position as preferred Planview SI for implementation</td></tr>
+    <tr><td><strong>AWS</strong></td><td>Cloud Infrastructure</td><td><span class="pill pill-green">Ally</span></td><td>Planview on AWS Marketplace — commercial acceleration</td></tr>
+  </table>
+</div>
+
+<!-- ==================== TAB: OUTREACH PLAYBOOK ==================== -->
+<div class="content" id="tab-outreach">
+  <div class="note"><strong>Outreach Guide:</strong> 10 fully differentiated emails and talk tracks. Click any header to expand. Each targets a specific stakeholder, maturity level, and value angle. No hyphens or dashes used in messages.</div>
+
+  <!-- EMAIL 1 -->
+  <div class="email-item">
+    <div class="email-header" onclick="toggleEmail(this)">
+      <div><div class="email-to">1. Trinath Anaparthi — CIO / SVP Operations</div><div class="email-subject">Opening: Executive Credibility Risk at Board Level</div></div>
+      <div class="email-toggle">▼</div>
+    </div>
+    <div class="email-body">
+      <div class="email-text">Subject: Visa's portfolio execution story at the board level
+
+Trinath,
+
+When a company is simultaneously launching AI agent commerce, scaling B2B payments infrastructure, and replacing core platform tools, the question that lands on the CIO's desk at every board review is the same: how confident are you that the right initiatives are funded, resourced, and on track?
+
+The teams evaluating Planview across Value Services, GPC, and Technology have been asking detailed questions about how we connect real-time portfolio data to executive decision-making. The answer we keep coming back to is this: the insight that matters most to you is not what any single project is doing. It is whether the overall portfolio is being worked in the right priority order given where Visa is headed in 2026.
+
+I would welcome 20 minutes to walk you through how Visa's portfolio would look through a Planview lens, specifically how the Clarity replacement creates a foundation for the kind of board-ready visibility your teams have been working toward.
+
+Regards,
+Larry Bonham
+Strategic Account Executive, Planview
+(650) 906-9524</div>
+      <div class="talk-track">
+        <div class="talk-track-label">Phone Talk Track</div>
+        <div class="talk-track-text">Opening: "Trinath, my name is Larry Bonham from Planview. Your teams have been doing a thorough evaluation of our platform as part of the Clarity replacement initiative, and I wanted to connect directly with you because the question we keep hearing from your evaluators is one that ultimately lands on your desk: how do you give the board confidence that your portfolio is sequenced correctly as Visa accelerates into 2026? I would welcome a brief conversation to walk you through what that looks like from a Planview perspective."
+
+If asked about the evaluation: "Your teams across Value Services, GPC, and Tech have been incredibly thorough. What I want to make sure you understand directly is the strategic layer of what we do, which goes beyond project tracking into portfolio-level decision support for executives in your position."
+
+Close: "Would 20 minutes this week or next work for a focused conversation?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL 2 -->
+  <div class="email-item">
+    <div class="email-header" onclick="toggleEmail(this)">
+      <div><div class="email-to">2. Rajat Taneja — President, Technology</div><div class="email-subject">Opening: Technology Portfolio Velocity for Visa's AI Agenda</div></div>
+      <div class="email-toggle">▼</div>
+    </div>
+    <div class="email-body">
+      <div class="email-text">Subject: Execution infrastructure for Visa Intelligent Commerce
+
+Rajat,
+
+You have placed very large bets on AI commerce, with OpenAI, Anthropic, and Microsoft all part of the 2026 story. Each of those bets competes for engineering talent, budget, and attention inside Visa's technology organization.
+
+The hardest part of leading a portfolio that ambitious is not deciding what to build. It is deciding what not to build, and being able to defend that decision with data rather than organizational pressure.
+
+Planview is the platform your teams across GPC, Value Services, and Technology are evaluating to replace CA Clarity. I would like to bring you into that conversation at a different level: not a feature review, but a discussion about how your portfolio governance infrastructure needs to evolve to match the speed of your commercial ambitions.
+
+Would you be open to a brief conversation this month?
+
+Larry Bonham
+Strategic Account Executive, Planview
+(650) 906-9524</div>
+      <div class="talk-track">
+        <div class="talk-track-label">Phone Talk Track</div>
+        <div class="talk-track-text">Opening: "Rajat, I am Larry Bonham from Planview. Your organization is in the middle of evaluating us for the Clarity replacement, and I want to connect with you specifically because the conversation happening at the working level is a very different one from what I think matters most to you. You are running one of the most ambitious technology portfolios in payments right now. The question I want to explore with you is whether your portfolio infrastructure is moving at the same speed as your commercial agenda."
+
+Bridge: "The teams in GPC, Value Services, and Technology have done excellent work in the evaluation. What I want you to hear directly from me is the strategic case for why this platform decision matters beyond the PPM tool replacement."
+
+Ask: "Do you have 20 minutes in the next two weeks for that conversation?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL 3 -->
+  <div class="email-item">
+    <div class="email-header" onclick="toggleEmail(this)">
+      <div><div class="email-to">3. Deirdre (Dee) Sawyer — Sr. Director, Corporate Marketing</div><div class="email-subject">Champion Coaching: Building the Business Case Upward</div></div>
+      <div class="email-toggle">▼</div>
+    </div>
+    <div class="email-body">
+      <div class="email-text">Subject: Building the brief for Trinath
+
+Dee,
+
+Thank you for the time your team has invested in the Planview evaluation. The depth of questions from your group has been genuinely impressive, and it tells me you are thinking about this as a long-term capability decision, not just a tool swap.
+
+As you prepare your recommendation to move forward, I want to make sure you have everything you need to make the case compellingly at the executive level. Based on what your team has shared with us, the three most resonant points for someone in Trinath's position are typically:
+
+First, the portfolio visibility argument: one view of priorities across all three groups instead of three competing narratives. Second, the execution credibility argument: a platform built to give executives defensible answers about what is being worked and why. Third, the commercial path: the AWS Marketplace option, which your procurement team is already exploring, can significantly simplify the contract process.
+
+I would welcome the chance to put together a one-page executive brief with you ahead of your internal review. Would 30 minutes this week work?
+
+Larry Bonham
+(650) 906-9524</div>
+      <div class="talk-track">
+        <div class="talk-track-label">Phone Talk Track</div>
+        <div class="talk-track-text">Opening: "Dee, Larry Bonham from Planview. I wanted to connect because I know you are preparing your recommendation for Trinath, and I want to make sure you have the strongest possible brief going into that conversation. The evaluation your team has done is thorough, and I think you are well positioned to make a compelling case. Can I share what we have seen work best in similar situations at this stage?"
+
+Key points to make: "(1) Keep the exec brief to three points: unified visibility, execution credibility, and commercial simplicity via AWS. (2) The AWS Marketplace angle is particularly powerful right now because it removes the longest part of the procurement timeline. (3) We can provide a reference from a comparable financial services customer if Trinath asks for proof points."
+
+Ask: "What is the most useful thing I can put in your hands before your internal review?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL 4 -->
+  <div class="email-item">
+    <div class="email-header" onclick="toggleEmail(this)">
+      <div><div class="email-to">4. Murali Mareedu — Sr. Director PMO (Finance)</div><div class="email-subject">Value: Defending Portfolio Decisions to Finance Leadership</div></div>
+      <div class="email-toggle">▼</div>
+    </div>
+    <div class="email-body">
+      <div class="email-text">Subject: When Finance asks why these priorities
+
+Murali,
+
+One of the hardest moments in portfolio management is when Finance asks why a specific set of initiatives is being funded when there are 15 competing priorities that all seem critical. The typical answer is a combination of spreadsheets, meeting notes, and institutional memory.
+
+The Planview model is built around this exact problem. Every prioritization decision is anchored to agreed business value criteria, not subjective ranking or political momentum. When your leadership asks why the current portfolio is sequenced the way it is, the answer is a dashboard, not a conversation.
+
+Given where you are in the evaluation, I wanted to make sure you have seen the financial services portfolio governance workflows we customized specifically for Visa's use cases. The GPC process demo we built in August goes directly to this point.
+
+Would 20 minutes this week be useful for a focused discussion on the Finance PMO use case?
+
+Larry Bonham
+(650) 906-9524</div>
+      <div class="talk-track">
+        <div class="talk-track-label">Phone Talk Track</div>
+        <div class="talk-track-text">Opening: "Murali, this is Larry Bonham from Planview. We have been working with your team on the evaluation and I wanted to connect specifically around the Finance PMO use case, because I think that is where the most compelling ROI story lives for your group. The challenge I hear most often from Sr. Directors in your position is that when Finance leadership asks why specific priorities are funded, the answer is always a meeting, not a model. I want to walk you through how Planview changes that dynamic."
+
+Key point: "The GPC process demo we delivered in August was built specifically around the workflows your team described. I want to make sure that use case is front and center in your recommendation."
+
+Ask: "Can we find 20 minutes this week to walk through the Finance PMO governance flow together?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL 5 -->
+  <div class="email-item">
+    <div class="email-header" onclick="toggleEmail(this)">
+      <div><div class="email-to">5. Ritu Nair — VP Developer Experience</div><div class="email-subject">Opening: Connecting Developer Delivery to Portfolio Outcomes</div></div>
+      <div class="email-toggle">▼</div>
+    </div>
+    <div class="email-body">
+      <div class="email-text">Subject: When delivery velocity meets portfolio accountability
+
+Ritu,
+
+The tension every VP of Developer Experience navigates is that delivery teams move fast while portfolio governance moves slow. When those two worlds operate on different systems and different cadences, the result is a constant translation problem: leadership cannot see what engineering is actually working on in terms the business cares about.
+
+Planview addresses this by connecting your delivery pipeline directly to portfolio-level outcomes. Engineering teams continue working in their tools and methods of choice. The portfolio layer aggregates that work into business-aligned visibility without creating reporting overhead for your developers.
+
+Given your focus on DPD delivery at Visa, I would welcome a brief conversation on how Planview bridges the developer experience and portfolio accountability in a way that neither Microsoft nor Oracle can match in a hybrid environment.
+
+Would 20 minutes this week work?
+
+Larry Bonham
+Strategic Account Executive, Planview</div>
+      <div class="talk-track">
+        <div class="talk-track-label">Phone Talk Track</div>
+        <div class="talk-track-text">Opening: "Ritu, my name is Larry Bonham from Planview. I know you are part of the evaluation team for the Clarity replacement and I wanted to connect specifically because the DPD delivery angle is one where I think we have a genuinely differentiated story for you. The challenge I hear from VPs in your role is that developer teams move fast, but portfolio governance slows them down because it adds reporting overhead. I want to walk you through how we eliminate that friction."
+
+Bridge: "The way Planview connects your agile delivery teams to the portfolio layer means you get the visibility leadership needs without burdening your engineers with status updates."
+
+Ask: "Is there a 20-minute window this week where I can walk you through the DPD flow?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL 6 -->
+  <div class="email-item">
+    <div class="email-header" onclick="toggleEmail(this)">
+      <div><div class="email-to">6. Beau Brundrett — Director Strategic Sourcing</div><div class="email-subject">Commercial Acceleration: AWS Marketplace Path</div></div>
+      <div class="email-toggle">▼</div>
+    </div>
+    <div class="email-body">
+      <div class="email-text">Subject: A faster path to contract closure
+
+Beau,
+
+Thank you for making time to connect this week. As we work toward finalizing the commercial structure, I wanted to make sure you are aware of an option that has meaningfully accelerated similar transactions for other enterprise clients.
+
+Planview is available on the AWS Marketplace. For organizations with existing AWS contractual commitments, this path allows the transaction to move through an already-approved commercial vehicle, bypassing several of the standard MSA and DPA steps that typically add 60 to 90 days to a procurement cycle.
+
+Given that your team has an existing relationship with AWS, this may be worth a 15-minute conversation with Connor Roche and our AWS Alliance team to confirm whether this route applies to Visa's current AWS commitment structure.
+
+I can facilitate that introduction immediately if it would be helpful. Would that be a useful next step?
+
+Larry Bonham
+(650) 906-9524</div>
+      <div class="talk-track">
+        <div class="talk-track-label">Phone Talk Track</div>
+        <div class="talk-track-text">Opening: "Beau, Larry Bonham from Planview. Thank you again for the time this week. I wanted to follow up on something specific that I think could be a meaningful accelerant for us on the commercial side. Are you familiar with how the AWS Marketplace transaction path works for software procurement?"
+
+Key pitch: "Planview is fully available on AWS Marketplace. If Visa has an existing AWS committed spend agreement, we can route this transaction through that vehicle. It eliminates most of the standard MSA and DPA steps and has compressed timelines from 90 days to under 3 weeks for other clients in similar situations."
+
+Follow-up: "Your AWS contact Connor Roche is already looped into this opportunity. Would it be helpful if I set up a quick 15-minute call between you, Connor, and our AWS Alliance Director Justin Gatlin to confirm whether this path is available for Visa?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL 7 -->
+  <div class="email-item">
+    <div class="email-header" onclick="toggleEmail(this)">
+      <div><div class="email-to">7. Sangeeta Aryasomayajula — Director, Enterprise Solutions &amp; AI</div><div class="email-subject">Value: AI-Ready Portfolio Governance</div></div>
+      <div class="email-toggle">▼</div>
+    </div>
+    <div class="email-body">
+      <div class="email-text">Subject: Portfolio infrastructure for an AI-first technology organization
+
+Sangeeta,
+
+As Visa accelerates its AI initiative portfolio, including the Intelligent Commerce platform and the internal AI tooling investments your team manages, the portfolio governance challenge becomes distinctly different from traditional project tracking.
+
+AI initiatives are characterized by high uncertainty, rapid pivots, and resource demands that shift faster than quarterly planning cycles can accommodate. The platform your organization selects to replace Clarity needs to be built for this dynamic, not for the waterfall world that shaped most legacy PPM tools.
+
+Planview's Anvi AI engine does something relevant here: it identifies portfolio risk signals before they surface in status reports, using delivery data to forecast outcomes and highlight where replanning is needed. For an organization running as many AI bets simultaneously as Visa, that kind of predictive visibility is the difference between catching a failing initiative in week 3 versus month 6.
+
+I would welcome a focused 30-minute session on the AI portfolio use case. Would this week or next work?
+
+Larry Bonham
+(650) 906-9524</div>
+      <div class="talk-track">
+        <div class="talk-track-label">Phone Talk Track</div>
+        <div class="talk-track-text">Opening: "Sangeeta, this is Larry Bonham from Planview. I wanted to connect with you specifically because your focus on enterprise solutions and AI puts you in a unique position in this evaluation. The PPM replacement question for you is not just about replacing Clarity. It is about whether the new platform can actually keep pace with how Visa's AI investment portfolio operates, which is fundamentally different from traditional project portfolios."
+
+Key message: "Planview's Anvi AI engine is purpose-built for exactly this problem. It surfaces risk signals from delivery data before they show up in status meetings, which matters a lot when you are running high-uncertainty AI initiatives that can pivot quickly."
+
+Ask: "Would a 30-minute focused session on the AI portfolio use case be valuable for you this week?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL 8 -->
+  <div class="email-item">
+    <div class="email-header" onclick="toggleEmail(this)">
+      <div><div class="email-to">8. Murali Sreenivasan — Sr. Director PMO (Revenue Processing)</div><div class="email-subject">Value: Revenue-Processing Portfolio Governance</div></div>
+      <div class="email-toggle">▼</div>
+    </div>
+    <div class="email-body">
+      <div class="email-text">Subject: Portfolio governance when every project touches revenue
+
+Murali,
+
+Managing a portfolio where the majority of projects have direct downstream impact on revenue processing creates a very specific kind of governance challenge. Delays are not just schedule misses. They are revenue events.
+
+The Planview model is built around this reality. Resource capacity constraints are surfaced before they become schedule slips. Dependency chains across delivery teams are visible in real time. And when a replanning decision is needed, the system gives you the data to make it quickly and defend it clearly to senior leadership.
+
+Given the revenue-processing dimension of your PMO scope, I want to make sure you have seen how Planview handles the specific scenarios your team described in the Q2 2025 RFP. The use cases we built around financial services workflows speak directly to your environment.
+
+Would 20 minutes this week work for a focused conversation?
+
+Larry Bonham
+(650) 906-9524</div>
+      <div class="talk-track">
+        <div class="talk-track-label">Phone Talk Track</div>
+        <div class="talk-track-text">Opening: "Murali, this is Larry Bonham from Planview. I am following up on the evaluation your team has been doing and wanted to connect specifically around the revenue processing PMO use case, because I think that is where Planview has the strongest story for your group."
+
+Key point: "When project delays touch revenue processing, you need governance infrastructure that surfaces risk before it becomes a business impact, not after. That is precisely what Planview does differently from both Microsoft and Oracle in your environment."
+
+Ask: "Based on the RFP use cases your team submitted, there are two or three scenarios I think would resonate most with you. Can I walk through those in 20 minutes this week?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL 9 -->
+  <div class="email-item">
+    <div class="email-header" onclick="toggleEmail(this)">
+      <div><div class="email-to">9. Mariko Sola — Global Strategic Sourcing Executive</div><div class="email-subject">Opening: Strategic Sourcing at the Executive Level</div></div>
+      <div class="email-toggle">▼</div>
+    </div>
+    <div class="email-body">
+      <div class="email-text">Subject: The sourcing decision behind the PPM replacement
+
+Mariko,
+
+Your team has been deeply engaged in the Clarity replacement evaluation, and I appreciate the rigor your organization brings to strategic vendor decisions at this scale.
+
+I want to connect with you directly because enterprise software decisions of this size have a sourcing dimension that goes beyond the technical scorecard. The questions I find most relevant at your level are: what does the long-term vendor relationship look like, how does implementation risk get managed, and what commercial structures are available to give Visa the flexibility it needs over a multi-year term.
+
+On each of those dimensions, Planview has a differentiated position. We have a dedicated customer success model, a global SI ecosystem including Infosys who is already embedded in your evaluation, and a AWS Marketplace commercial path that may simplify the initial contract significantly.
+
+I would value 20 minutes to discuss the strategic sourcing picture with you directly. Would this week work?
+
+Larry Bonham
+Strategic Account Executive, Planview
+(650) 906-9524</div>
+      <div class="talk-track">
+        <div class="talk-track-label">Phone Talk Track</div>
+        <div class="talk-track-text">Opening: "Mariko, my name is Larry Bonham from Planview. Your team has been doing excellent work on the evaluation and I wanted to connect with you directly at the sourcing executive level because I think there are a few strategic dimensions of this decision that your team will want to hear from me directly, rather than just through the technical evaluation process."
+
+Key points: "(1) Planview has a named SI partner relationship with Infosys, who is already embedded in your evaluation team. That significantly reduces your implementation risk. (2) The AWS Marketplace path may simplify your procurement process considerably. (3) Our customer success model is built for long-term enterprise relationships, not just initial deployment."
+
+Ask: "Can I have 20 minutes with you this week to walk through the strategic sourcing picture?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL 10 -->
+  <div class="email-item">
+    <div class="email-header" onclick="toggleEmail(this)">
+      <div><div class="email-to">10. Victor Kapadia — Technical Lead</div><div class="email-subject">Re-engagement: Technical Validation and Integration Architecture</div></div>
+      <div class="email-toggle">▼</div>
+    </div>
+    <div class="email-body">
+      <div class="email-text">Subject: Checking in on technical integration questions
+
+Victor,
+
+Thank you for your continued responsiveness throughout this process. As we move toward a final decision, I want to make sure the technical team has complete confidence in the integration architecture and implementation approach.
+
+A few specific areas I want to make sure are fully addressed from your perspective: the data migration path from CA Clarity to Planview PPM Pro, the integration points with Visa's existing ITSM and financial systems, the API layer and extensibility for the custom GPC process workflows, and the approach to phased rollout across the three groups evaluating the platform.
+
+Anthony Cessario from our solutions engineering team has built out the technical architecture for several Clarity replacement programs at institutions of Visa's scale. I would like to set up a 45-minute technical deep dive between you, Anthony, and our implementation team if that would give you the confidence you need to finalize your recommendation.
+
+Would that be a useful next step?
+
+Larry Bonham
+(650) 906-9524</div>
+      <div class="talk-track">
+        <div class="talk-track-label">Phone Talk Track</div>
+        <div class="talk-track-text">Opening: "Victor, Larry Bonham from Planview. I appreciate your continued engagement throughout this evaluation. I am calling to make sure the technical team has full confidence in our integration architecture before the final recommendation goes up to Trinath. Are there any open technical questions I can help close?"
+
+Key areas to probe: "I want to specifically make sure we have addressed the Clarity data migration path, the API architecture for GPC process customization, and the integration with your financial systems. These are typically the three areas where technical teams want additional depth before finalizing a recommendation."
+
+Close offer: "I can set up a 45-minute technical deep dive between you and our solutions architect Anthony Cessario this week. Would that be helpful?"</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB: DEAL TIMELINE ==================== -->
+<div class="content" id="tab-timeline">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">Deal History &amp; Milestones</div>
+      <div class="timeline">
+        <div class="timeline-item done">
+          <div class="timeline-date">Q2 2025</div>
+          <div class="timeline-title">Visa Issues Formal PPM RFP</div>
+          <div class="timeline-body">Visa issued a structured PPM RFX with scoring criteria across project management, resource management, GPC process workflows, user personas, and integration requirements. Planview submitted a full response with custom scoring.</div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-date">JUNE 2025</div>
+          <div class="timeline-title">Planview RFP Response Submitted</div>
+          <div class="timeline-body">Planview submitted the Visa PPM RFP response with detailed feature/capability scoring across all required dimensions.</div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-date">AUG 2025</div>
+          <div class="timeline-title">Demo R2 Use Cases Delivered</div>
+          <div class="timeline-body">Planview built and delivered custom GPC process VIK use cases (Planview PPM Demo R2 Use Cases 082925) tailored to Visa's specific workflows including Create a VIK Project and related steps.</div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-date">SEPT 2025</div>
+          <div class="timeline-title">AWS Marketplace Listed</div>
+          <div class="timeline-body">Clarity SaaS Enterprise PPM listed on AWS Marketplace, enabling commercial acceleration path for Visa via existing AWS spend commitments.</div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-date">JAN 2026</div>
+          <div class="timeline-title">Demo R2 Use Cases Updated</div>
+          <div class="timeline-body">Final updates to GPC process demo use cases, last modified January 9, 2026.</div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-date">MAR 17, 2026</div>
+          <div class="timeline-title">AWS Alliance Engagement Initiated</div>
+          <div class="timeline-body">Justin Gatlin (Planview AWS Alliance Director) initiated progress update with AWS team (Connor Roche, Maggie McEntee). Vendor selection expected by end of that week (later slipped). Competitors confirmed as Microsoft and Oracle.</div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-date">MAR 24, 2026</div>
+          <div class="timeline-title">Implementation Partner Discussion</div>
+          <div class="timeline-body">Planview provided preferred SI list (Deloitte, Accenture, PWC). Visa asked about additional SIs. Infosys included in overall discussion. Questions raised about which GSIs are positioned with Trinath's organization.</div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-date">MAR 27, 2026</div>
+          <div class="timeline-title">EY Meets with Puneet (Visa)</div>
+          <div class="timeline-body">EY's Gary Capriotti met with Puneet at Visa. Confirmed Puneet does not have direct access to Trinath or Rajat following recent Visa reorg. Puneet to connect with Sid Sudarshan in early April.</div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-date">APR 14, 2026</div>
+          <div class="timeline-title">EY Weekly Check-In Confirms Visa Status</div>
+          <div class="timeline-body">EY provides Planview team (Wesley Coelho, Erin Slifer, Larry Bonham) with updated status. Visa remains an active priority account. EY working to find path to Trinath.</div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-date">APR 20, 2026</div>
+          <div class="timeline-title">Multiple Stakeholder Outreach</div>
+          <div class="timeline-body">Larry Bonham conducts simultaneous outreach: (1) Victor Kapadia re Clarity replacement status; (2) Jason Mahvash re procurement update; (3) Beau Brundrett meeting request. Deal scoped at $1.7M ACV, 3-year term confirmed by Justin Gatlin.</div>
+        </div>
+        <div class="timeline-item done">
+          <div class="timeline-date">APR 21, 2026</div>
+          <div class="timeline-title">Beau Brundrett Meeting Confirmed</div>
+          <div class="timeline-body">Beau Brundrett (Visa Sourcing) confirmed meeting with Planview team. Victor Kapadia confirmed Beau is the right contact. AWS (Connor Roche) independently chatting with Beau Brundrett. AWS team available for meeting 4/22 4:30PM EST.</div>
+        </div>
+        <div class="timeline-item active-step">
+          <div class="timeline-date">APR 24, 2026 (TODAY)</div>
+          <div class="timeline-title">ACTIVE: Trinath Escalation Underway</div>
+          <div class="timeline-body">Planview CEO has had positive senior exec meetings at Visa. AWS and EY actively pursuing Trinath Anaparthi connection. Final pricing working session being planned.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">TARGET: MAY 2026</div>
+          <div class="timeline-title">Executive Alignment Meeting with Trinath</div>
+          <div class="timeline-body">Target: Establish direct Trinath Anaparthi connection via AWS (Maggie McEntee) or Planview CEO relationship. Present unified portfolio value case.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">TARGET: MAY 2026</div>
+          <div class="timeline-title">Final Pricing Working Session</div>
+          <div class="timeline-body">Commercial finalization including AWS Marketplace transaction routing option. Mutual close plan to be established.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">TARGET: Q2/Q3 2026</div>
+          <div class="timeline-title">Contract Signature</div>
+          <div class="timeline-body">$1.7M ACV, 3-year term. Vendor selection followed by MSA/DPA (or AWS Marketplace acceleration). Implementation kickoff with Infosys as preferred SI.</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">Deal Mechanics</div>
+        <table>
+          <tr><td style="color:var(--muted)">ACV Target</td><td><strong>$1.7M</strong></td></tr>
+          <tr><td style="color:var(--muted)">Term</td><td>3 years</td></tr>
+          <tr><td style="color:var(--muted)">TCV</td><td><strong>$5.1M</strong></td></tr>
+          <tr><td style="color:var(--muted)">Deal Stage</td><td><span class="pill pill-orange">Late Evaluation</span></td></tr>
+          <tr><td style="color:var(--muted)">Competitors</td><td>Microsoft · Oracle</td></tr>
+          <tr><td style="color:var(--muted)">AWS ACE Record</td><td>Updated by Justin Gatlin (Apr 21)</td></tr>
+          <tr><td style="color:var(--muted)">Commercial Path</td><td>Direct or AWS Marketplace</td></tr>
+          <tr><td style="color:var(--muted)">SI Partner</td><td>Infosys (embedded), Deloitte, Accenture, PWC options</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-header">Top Risks &amp; Mitigations</div>
+        <div class="medd-item" style="margin-bottom:10px;">
+          <div class="medd-body"><strong style="color:var(--red);">RISK 1: No exec access to Trinath/Rajat</strong><br>Mitigation: Leverage Maggie McEntee (AWS, regular Trinath cadence) and Planview CEO relationship. Timeline: this week.</div>
+        </div>
+        <div class="medd-item" style="margin-bottom:10px;">
+          <div class="medd-body"><strong style="color:var(--yellow);">RISK 2: Infosys contractor influencing evaluation</strong><br>Mitigation: Engage Avinash Takale directly as Planview implementation partner contact. Make Infosys an ally.</div>
+        </div>
+        <div class="medd-item" style="margin-bottom:10px;">
+          <div class="medd-body"><strong style="color:var(--yellow);">RISK 3: Multi-group misalignment (Value Services vs GPC vs Tech)</strong><br>Mitigation: Build unified exec brief showing how Planview serves all three groups from one platform.</div>
+        </div>
+        <div class="medd-item" style="margin-bottom:10px;">
+          <div class="medd-body"><strong style="color:var(--orange);">RISK 4: Procurement delay (MSA/DPA)</strong><br>Mitigation: Confirm AWS Marketplace route with Beau Brundrett and Connor Roche. Can eliminate 60-90 days.</div>
+        </div>
+        <div class="medd-item">
+          <div class="medd-body"><strong style="color:var(--blue);">RISK 5: No mutual close plan</strong><br>Mitigation: Establish shared close plan milestones with Beau Brundrett and Trinath once exec contact is made.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB: LIVE FEED ==================== -->
+<div class="content" id="tab-livefeed">
+  <div class="note"><strong>Live Feed:</strong> Real-time Visa news, earnings updates, and market signals relevant to portfolio management, technology investment, and strategic execution. Sources refresh from public data. Use these signals to personalize outreach and identify urgency triggers.</div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button id="refresh-btn" onclick="refreshNewsFeed()" style="display:flex;align-items:center;gap:8px;background:var(--orange);color:white;border:none;padding:9px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;">
+        <span id="refresh-icon" style="display:inline-block;font-size:14px;">↻</span> Refresh News
+      </button>
+      <span id="feed-status" style="font-size:12px;color:var(--muted);">Showing cached articles — click Refresh for latest</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <span style="font-size:12px;color:var(--muted);">Sources:</span>
+      <span class="badge badge-blue">Google News</span>
+      <span class="badge badge-orange">Visa IR</span>
+      <span class="badge badge-green">Payments Dive</span>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>Recent Visa News &amp; Market Signals</span>
+        <span id="article-count" style="font-size:12px;color:var(--muted);font-weight:400;"></span>
+      </div>
+
+      <div id="news-feed-container">
+
+      <div class="news-card">
+        <div class="news-dot" style="background:var(--orange)"></div>
+        <div>
+          <div class="news-title"><a href="https://www.businesswire.com/news/home/20250430574512/en/The-Future-is-Here-Visa-Announces-New-Era-of-Commerce-Featuring-AI" target="_blank">Visa Announces New Era of Commerce Featuring AI</a></div>
+          <div class="news-meta">BusinessWire · April 30, 2025</div>
+          <div class="news-summary">Visa introduced Visa Intelligent Commerce, opening its payments network to developers building AI agent commerce. Full commercial deployment targeted for 2026. Partnerships with OpenAI, Microsoft, and Anthropic confirmed. Direct trigger for internal portfolio execution infrastructure investment.</div>
+        </div>
+      </div>
+
+      <div class="news-card">
+        <div class="news-dot" style="background:var(--blue)"></div>
+        <div>
+          <div class="news-title"><a href="https://www.paymentsdive.com/news/visa-strategy-blueprint-for-global-card-payments-growth/741320/" target="_blank">Visa Lays Out Blueprint for Global Growth</a></div>
+          <div class="news-meta">Payments Dive · 2025</div>
+          <div class="news-summary">Visa's strategic blueprint targets 9-12% revenue CAGR with three growth drivers: Consumer Payments, Commercial and Money Movement Solutions (CMS), and Value-Added Services (VAS). VAS growth to 50% of revenue by 2026 creates significant internal portfolio execution pressure across technology and product groups.</div>
+        </div>
+      </div>
+
+      <div class="news-card">
+        <div class="news-dot" style="background:var(--green)"></div>
+        <div>
+          <div class="news-title"><a href="https://s1.q4cdn.com/050606653/files/doc_downloads/2025/02/CORRECTED-TRANSCRIPT_-Visa-Inc-V-US-Investor-Day-20-February-2025-11_00-AM-ET.pdf" target="_blank">Visa Investor Day 2025 — Technology Roadmap</a></div>
+          <div class="news-meta">Visa Investor Relations · February 20, 2025</div>
+          <div class="news-summary">Rajat Taneja outlined Visa's technology investment roadmap at Investor Day, highlighting generative AI deployment, network processing expansion, and platform modernization. Internal portfolio governance was cited as a key enabler of execution confidence for the board.</div>
+        </div>
+      </div>
+
+      <div class="news-card">
+        <div class="news-dot" style="background:var(--yellow)"></div>
+        <div>
+          <div class="news-title"><a href="https://fortune.com/company-assets/689/quartr/annual-report-10-k-db390-2025-11-06-09-56-12.pdf" target="_blank">Visa FY2025 10-K — Cybersecurity &amp; Technology Risk</a></div>
+          <div class="news-meta">SEC / Fortune · November 6, 2025</div>
+          <div class="news-summary">Visa's FY2025 10-K identifies cybersecurity risk and technology investment governance as key enterprise risks under board-level audit committee oversight. Network and processing expenses increased due to technology and processing network investments. Board-level risk oversight directly elevates the urgency of portfolio visibility infrastructure.</div>
+        </div>
+      </div>
+
+      <div class="news-card">
+        <div class="news-dot" style="background:var(--blue)"></div>
+        <div>
+          <div class="news-title"><a href="https://www.globenewswire.com/news-release/2026/04/09/3271164/0/en/Visa-Digital-Transformation-Strategy-Analysis-Report-2025-Accelerators-Innovation-Programs-Technology-Initiatives-ICT-Partnerships-Investments-Acquisitions-Network-Map.html" target="_blank">Visa Digital Transformation Strategy Analysis 2025</a></div>
+          <div class="news-meta">GlobeNewswire · April 9, 2026</div>
+          <div class="news-summary">Comprehensive analysis of Visa's digital transformation strategy including accelerators, innovation programs, technology initiatives, ICT partnerships, investments, and acquisitions. Highlights the breadth of Visa's simultaneous technology bets and the portfolio management complexity this creates.</div>
+        </div>
+      </div>
+
+      </div><!-- end #news-feed-container -->
+    </div>
+
+    <div>
+      <div class="section-title">Outreach Triggers &amp; Talking Points</div>
+
+      <div class="card2" style="margin-bottom:12px;">
+        <div class="card-header">Trigger: AI Commerce Commercial Deployment (2026)</div>
+        <div class="vh-body">Visa's Intelligent Commerce initiative targets full commercial deployment in 2026. This creates immediate pressure on Trinath's organization to demonstrate that the technology portfolio is sequenced correctly to support this timeline. Use this trigger when opening conversations with Trinath and Rajat: "As Visa moves toward commercial AI commerce deployment in 2026, how confident are you that your portfolio infrastructure is keeping pace with execution demands?"</div>
+      </div>
+
+      <div class="card2" style="margin-bottom:12px;">
+        <div class="card-header">Trigger: VAS Revenue Target (50% by 2026)</div>
+        <div class="vh-body">Visa's public commitment to grow VAS to 50% of revenue by 2026 creates urgency around portfolio reprioritization. Use with Murali Mareedu and Murali Sreenivasan: "Visa's public guidance commits to 50% VAS revenue by 2026. The question your PMO teams will face every quarter is whether the portfolio is actually weighted toward the initiatives that deliver that outcome — and whether you can prove it to leadership."</div>
+      </div>
+
+      <div class="card2" style="margin-bottom:12px;">
+        <div class="card-header">Trigger: Rajat Taneja Technology Roadmap</div>
+        <div class="vh-body">Rajat Taneja publicly committed to generative AI, network processing, and platform modernization at Investor Day February 2025. Use to open with his team: "Rajat laid out a very ambitious technology investment roadmap at Investor Day. The internal governance infrastructure to execute on that roadmap is exactly what Planview provides — and it starts with replacing Clarity."</div>
+      </div>
+
+      <div class="card2" style="margin-bottom:12px;">
+        <div class="card-header">Trigger: FY2025 10-K Technology Risk Disclosure</div>
+        <div class="vh-body">Visa's board-level audit committee has direct oversight of technology risk governance. Use with Trinath: "Visa's 10-K positions technology investment governance as a board-level risk item. That means every quarterly review is also a governance review. Planview gives your organization the portfolio visibility to walk into those reviews with defensible answers rather than project status summaries."</div>
+      </div>
+
+      <div class="card2">
+        <div class="card-header">Monitor: Visa Leadership Changes</div>
+        <div class="vh-body">Following recent Visa reorganizations (noted by EY contact Puneet as disrupting access to Trinath and Rajat), monitor LinkedIn and Visa's investor site for additional org changes. New leaders in technology or operations often re-evaluate platform decisions — both a risk and an opportunity. Sources to watch: <a href="https://investor.visa.com/corporate-governance/management-team/default.aspx" style="color:var(--blue);" target="_blank">Visa Management Team</a> · <a href="https://www.linkedin.com/company/visa" style="color:var(--blue);" target="_blank">Visa LinkedIn</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="last-updated">Last updated: April 24, 2026 &nbsp;|&nbsp; Data sources: Salesforce, Outlook, SharePoint, LeadIQ, Visa 10-K, EY Weekly Check-In, AWS ACE &nbsp;|&nbsp; AE: Larry Bonham (lbonham@planview.com)</div>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function toggleEmail(header) {
+  const body = header.nextElementSibling;
+  const toggle = header.querySelector('.email-toggle');
+  if (body.classList.contains('open')) {
+    body.classList.remove('open');
+    toggle.textContent = '▼';
+  } else {
+    body.classList.add('open');
+    toggle.textContent = '▲';
+  }
+}
+
+const NEWS_QUERIES = [
+  'Visa+Inc+payments+technology',
+  'Visa+portfolio+management+strategy',
+  'Visa+AI+commerce+payments'
+];
+const DOT_COLORS = ['var(--orange)', 'var(--blue)', 'var(--green)', 'var(--yellow)', 'var(--red)'];
+
+function stripHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+}
+
+function formatDate(dateStr) {
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch(e) { return dateStr; }
+}
+
+function buildNewsCard(item, colorIdx) {
+  const dot = DOT_COLORS[colorIdx % DOT_COLORS.length];
+  const title = stripHtml(item.title || 'Untitled');
+  const link = item.link || item.url || '#';
+  const source = item.source_url || item.author || item.feed_title || '';
+  const date = formatDate(item.pubDate || item.published || '');
+  const summary = stripHtml(item.description || item.summary || item.content || '').slice(0, 220).trim();
+
+  return `<div class="news-card">
+    <div class="news-dot" style="background:${dot}"></div>
+    <div>
+      <div class="news-title"><a href="${link}" target="_blank" rel="noopener">${title}</a></div>
+      <div class="news-meta">${source}${source && date ? ' · ' : ''}${date}</div>
+      ${summary ? `<div class="news-summary">${summary}${summary.length >= 220 ? '…' : ''}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+async function refreshNewsFeed() {
+  const btn = document.getElementById('refresh-btn');
+  const icon = document.getElementById('refresh-icon');
+  const status = document.getElementById('feed-status');
+  const container = document.getElementById('news-feed-container');
+  const countEl = document.getElementById('article-count');
+
+  btn.disabled = true;
+  btn.style.opacity = '0.7';
+  icon.style.display = 'inline-block';
+  icon.style.animation = 'spin 0.8s linear infinite';
+  status.textContent = 'Fetching latest Visa news…';
+  status.style.color = 'var(--blue)';
+
+  const query = NEWS_QUERIES[Math.floor(Math.random() * NEWS_QUERIES.length)];
+  const rssUrl = encodeURIComponent(`https://news.google.com/rss/search?q=${query}&hl=en-US&gl=US&ceid=US:en`);
+  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}&api_key=&count=8`;
+
+  try {
+    const res = await fetch(apiUrl);
+    if (!res.ok) throw new Error('Network response not ok');
+    const data = await res.json();
+
+    if (data.status !== 'ok' || !data.items || data.items.length === 0) {
+      throw new Error('No articles returned');
+    }
+
+    const cards = data.items.map((item, i) => buildNewsCard(item, i)).join('');
+    container.innerHTML = cards;
+
+    const now = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    status.textContent = `Last refreshed at ${now} · ${data.items.length} articles loaded`;
+    status.style.color = 'var(--green)';
+    countEl.textContent = `${data.items.length} articles`;
+  } catch (err) {
+    status.textContent = 'Could not fetch live news — check network or CORS. Showing cached articles.';
+    status.style.color = 'var(--yellow)';
+    countEl.textContent = '';
+  } finally {
+    icon.style.animation = '';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
+}
+</script>
+
+<style>
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+</style>
+</body>
+</html>
