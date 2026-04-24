@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nike Live Intelligence Feed – Planview</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --pv-red: #C8102E;
+  --pv-dark: #1A1A1A;
+  --bg: #F4F3F0;
+  --card: #FFFFFF;
+  --border: #E2E0DC;
+  --text: #1A1A1A;
+  --muted: #6B6B6B;
+  --tag-bg: #EDECE9;
+  --accent-orange: #FA5400;
+  --accent-gold: #C69214;
+  --ok: #2D6A4F;
+  --ok-bg: #E8F5EE;
+  --warn-bg: #FFF8E6;
+  --danger-bg: #FEF0F0;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+/* ── Top nav ── */
+.topnav {
+  background: var(--pv-dark);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.topnav-left { display: flex; align-items: center; gap: 16px; }
+.pv-logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.18em; color: var(--pv-red); text-transform: uppercase; }
+.topnav-divider { width: 1px; height: 18px; background: rgba(255,255,255,0.12); }
+.topnav-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.04em; color: #fff; display: flex; align-items: center; gap: 8px; }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: #4CAF50; animation: pulse-green 2s ease-in-out infinite; flex-shrink: 0; }
+@keyframes pulse-green { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+.topnav-right { display: flex; align-items: center; gap: 12px; }
+.back-link { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.5); text-decoration: none; display: flex; align-items: center; gap: 5px; transition: color 0.15s; }
+.back-link:hover { color: rgba(255,255,255,0.9); }
+.refresh-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 12px; font-weight: 600; color: #fff;
+  background: var(--pv-red); border: none;
+  padding: 6px 14px; border-radius: 20px;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: opacity 0.15s;
+}
+.refresh-btn:hover { opacity: 0.85; }
+.refresh-btn:disabled { opacity: 0.5; cursor: default; }
+.spinning { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Layout ── */
+.layout { max-width: 1200px; margin: 0 auto; padding: 28px 32px 60px; display: grid; grid-template-columns: 1fr 260px; gap: 24px; align-items: start; }
+
+/* ── Main feed ── */
+.feed-header { margin-bottom: 20px; }
+.feed-kicker { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--pv-red); margin-bottom: 4px; }
+.feed-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 26px; color: var(--text); line-height: 1.1; margin-bottom: 6px; }
+.feed-meta { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.feed-meta-pill { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 3px 10px; font-family: 'DM Mono', monospace; font-size: 10px; }
+
+/* ── Filter bar ── */
+.filter-bar { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-btn {
+  font-size: 11px; font-weight: 600; padding: 5px 14px;
+  border: 1px solid var(--border); border-radius: 20px;
+  background: var(--card); color: var(--muted);
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+}
+.filter-btn:hover { border-color: #aaa; color: var(--text); }
+.filter-btn.active { background: var(--pv-red); color: #fff; border-color: var(--pv-red); }
+.filter-count { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; border-radius: 8px; font-size: 9px; font-weight: 700; padding: 0 3px; margin-left: 4px; background: rgba(255,255,255,0.25); }
+.filter-btn:not(.active) .filter-count { background: rgba(200,16,46,0.1); color: var(--pv-red); }
+
+/* ── Loading / error / empty ── */
+.state-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 40px 24px; text-align: center; }
+.state-icon { font-size: 32px; margin-bottom: 12px; }
+.state-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--text); margin-bottom: 6px; }
+.state-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.skel { background: linear-gradient(90deg, var(--tag-bg) 25%, #e8e7e3 50%, var(--tag-bg) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
+.skel-item { height: 88px; margin-bottom: 10px; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* ── News items ── */
+.news-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: start;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+.news-item:hover { border-color: #bbb; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+.ni-source { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.ni-headline { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; margin-bottom: 5px; }
+.ni-snippet { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 7px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ni-footer { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ni-date { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+.ni-tag { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.06em; text-transform: uppercase; }
+.tag-finance   { background: rgba(198,146,20,0.1);  color: #8a6000; }
+.tag-product   { background: rgba(45,106,79,0.1);   color: var(--ok); }
+.tag-leadership{ background: rgba(250,84,0,0.1);    color: var(--accent-orange); }
+.tag-tech      { background: rgba(21,101,192,0.1);  color: #1565C0; }
+.tag-compete   { background: rgba(200,16,46,0.1);   color: var(--pv-red); }
+.tag-general   { background: var(--tag-bg);         color: var(--muted); }
+.ni-arrow { font-size: 16px; color: var(--muted); flex-shrink: 0; padding-top: 2px; transition: color 0.15s; }
+.news-item:hover .ni-arrow { color: var(--pv-red); }
+
+/* ── Sidebar ── */
+.sidebar { position: sticky; top: 80px; }
+.sidebar-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+.sidebar-title { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.tracker-row { display: flex; align-items: center; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.tracker-row:last-child { border-bottom: none; }
+.tracker-label { font-size: 12px; color: var(--text); }
+.tracker-count { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 600; color: var(--pv-red); min-width: 20px; text-align: right; }
+.watchword { display: inline-block; font-size: 11px; background: var(--tag-bg); color: var(--muted); padding: 3px 8px; border-radius: 4px; margin: 3px 3px 0 0; }
+.quick-link { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--pv-red); text-decoration: none; padding: 5px 0; border-bottom: 1px solid var(--border); transition: opacity 0.15s; }
+.quick-link:last-child { border-bottom: none; }
+.quick-link:hover { opacity: 0.7; }
+.deal-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 9px; border-radius: 20px; }
+.deal-badge.active { background: rgba(200,16,46,0.1); color: var(--pv-red); border: 1px solid rgba(200,16,46,0.25); }
+
+@media(max-width: 800px) {
+  .layout { grid-template-columns: 1fr; padding: 20px 16px 40px; }
+  .sidebar { position: static; }
+  .topnav { padding: 0 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="topnav-left">
+    <div class="pv-logo">Planview</div>
+    <div class="topnav-divider"></div>
+    <div class="topnav-title">
+      <div class="live-dot"></div>
+      Nike Live Intelligence Feed
+    </div>
+  </div>
+  <div class="topnav-right">
+    <a class="back-link" href="index.html">← Account Plan</a>
+    <button class="refresh-btn" id="refresh-btn" onclick="loadFeed(true)">
+      <svg id="refresh-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Refresh
+    </button>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- MAIN FEED -->
+  <div>
+    <div class="feed-header">
+      <div class="feed-kicker">Nike, Inc. · NKE · Live Feed</div>
+      <div class="feed-title">Intelligence Feed</div>
+      <div class="feed-meta">
+        <span>Auto-sourced from Google News, Yahoo Finance, and industry publications</span>
+        <span class="feed-meta-pill" id="last-updated">Loading…</span>
+        <span class="feed-meta-pill" id="item-count">— items</span>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">All <span class="filter-count" id="cnt-all">0</span></button>
+      <button class="filter-btn" data-filter="finance" onclick="setFilter('finance',this)">Financial <span class="filter-count" id="cnt-finance">0</span></button>
+      <button class="filter-btn" data-filter="product" onclick="setFilter('product',this)">Product <span class="filter-count" id="cnt-product">0</span></button>
+      <button class="filter-btn" data-filter="leadership" onclick="setFilter('leadership',this)">Leadership <span class="filter-count" id="cnt-leadership">0</span></button>
+      <button class="filter-btn" data-filter="tech" onclick="setFilter('tech',this)">Technology <span class="filter-count" id="cnt-tech">0</span></button>
+      <button class="filter-btn" data-filter="compete" onclick="setFilter('compete',this)">Competitive <span class="filter-count" id="cnt-compete">0</span></button>
+    </div>
+
+    <div id="feed-container">
+      <!-- Loading skeletons -->
+      <div id="loading-state">
+        <div class="skel skel-item"></div>
+        <div class="skel skel-item"></div>
+        <div class="skel skel-item"></div>
+        <div class="skel skel-item"></div>
+        <div class="skel skel-item"></div>
+      </div>
+      <div id="items-container" style="display:none;"></div>
+      <div id="error-state" style="display:none;">
+        <div class="state-box">
+          <div class="state-icon">⚠️</div>
+          <div class="state-title">Feed unavailable</div>
+          <div class="state-body" id="error-msg">Could not load feed. Check your connection and try refreshing.</div>
+        </div>
+      </div>
+      <div id="empty-state" style="display:none;">
+        <div class="state-box">
+          <div class="state-icon">🔍</div>
+          <div class="state-title">No items match this filter</div>
+          <div class="state-body">Try switching to "All" or a different category.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">Deal Status</div>
+      <div style="margin-bottom:8px;">
+        <span class="deal-badge active">● Active RFP</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6;">
+        Release Orchestration Platform · Est. ACV $1.25M · Stage 1 Discover · Close Oct 2026
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">Topic Tracker</div>
+      <div class="tracker-row"><span class="tracker-label">Earnings & Finance</span><span class="tracker-count" id="tr-finance">—</span></div>
+      <div class="tracker-row"><span class="tracker-label">Product & Innovation</span><span class="tracker-count" id="tr-product">—</span></div>
+      <div class="tracker-row"><span class="tracker-label">Leadership & Org</span><span class="tracker-count" id="tr-leadership">—</span></div>
+      <div class="tracker-row"><span class="tracker-label">Technology</span><span class="tracker-count" id="tr-tech">—</span></div>
+      <div class="tracker-row"><span class="tracker-label">Competitive</span><span class="tracker-count" id="tr-compete">—</span></div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">Key Watchwords</div>
+      <div>
+        <span class="watchword">Elliott Hill</span>
+        <span class="watchword">Venkatesh</span>
+        <span class="watchword">Win Now</span>
+        <span class="watchword">World Cup</span>
+        <span class="watchword">NKE</span>
+        <span class="watchword">Aero-FIT</span>
+        <span class="watchword">Nike Mind</span>
+        <span class="watchword">China</span>
+        <span class="watchword">NIKE Direct</span>
+        <span class="watchword">tariffs</span>
+        <span class="watchword">Running</span>
+        <span class="watchword">Jordan</span>
+        <span class="watchword">Converse</span>
+        <span class="watchword">earnings</span>
+        <span class="watchword">Matt Friend</span>
+        <span class="watchword">EBIT</span>
+        <span class="watchword">supply chain</span>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-title">Quick Links</div>
+      <a class="quick-link" href="https://investors.nike.com" target="_blank">↗ Investor Relations</a>
+      <a class="quick-link" href="https://finance.yahoo.com/quote/NKE/news/" target="_blank">↗ Yahoo Finance · NKE</a>
+      <a class="quick-link" href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=NKE&type=10-K&dateb=&owner=include&count=5" target="_blank">↗ SEC Filings · NKE</a>
+      <a class="quick-link" href="https://news.nike.com" target="_blank">↗ Nike Newsroom</a>
+      <a class="quick-link" href="https://www.linkedin.com/company/nike/" target="_blank">↗ Nike LinkedIn</a>
+    </div>
+
+  </aside>
+</div>
+
+<script>
+// ── Category classifier ────────────────────────────────────────────────────
+const CATEGORIES = {
+  finance:    { label: 'Financial',    cls: 'tag-finance',    keywords: ['revenue','earnings','profit','margin','ebit','stock','nke','tariff','financial','fiscal','quarter','guidance','investor','dividend','shares','billion','million','debt','cost','spending','budget','sale','sales'] },
+  product:    { label: 'Product',      cls: 'tag-product',    keywords: ['shoe','footwear','apparel','sneaker','running','basketball','football','soccer','training','jordan','converse','air max','aero-fit','nike mind','structure','vomero','innovation','design','launch','collection','sport','athlete','world cup','nsrl','research','lab'] },
+  leadership: { label: 'Leadership',   cls: 'tag-leadership', keywords: ['ceo','coo','cfo','president','chief','executive','appoint','hire','resign','retire','elliott hill','matt friend','venkatesh','phil mccartney','leadership','management','board','director','officer','promoted','new role'] },
+  tech:       { label: 'Technology',   cls: 'tag-tech',       keywords: ['technology','digital','software','platform','app','nike.com','direct','data','ai','automation','engineering','release','deploy','system','cloud','tech','integration','api','agile'] },
+  compete:    { label: 'Competitive',  cls: 'tag-compete',    keywords: ['adidas','hoka','new balance','on running','puma','under armour','competitor','market share','industry','rival','brand','compete','versus'] },
+};
+
+function classifyItem(title, snippet) {
+  const text = (title + ' ' + snippet).toLowerCase();
+  for (const [cat, cfg] of Object.entries(CATEGORIES)) {
+    if (cfg.keywords.some(kw => text.includes(kw))) return cat;
+  }
+  return 'general';
+}
+
+// ── Date formatter ──────────────────────────────────────────────────────────
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    const now = new Date();
+    const diff = Math.floor((now - d) / 1000);
+    if (diff < 3600)  return Math.floor(diff/60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+    if (diff < 604800) return Math.floor(diff/86400) + 'd ago';
+    return d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+  } catch(e) { return dateStr; }
+}
+
+// ── RSS sources ─────────────────────────────────────────────────────────────
+// All fetched via allorigins.win which returns proper CORS headers
+const FEEDS = [
+  {
+    label: 'Google News',
+    url: 'https://news.google.com/rss/search?q=Nike+Inc+NKE&hl=en-US&gl=US&ceid=US:en',
+  },
+  {
+    label: 'Google News',
+    url: 'https://news.google.com/rss/search?q=Nike+earnings+stock&hl=en-US&gl=US&ceid=US:en',
+  },
+  {
+    label: 'Google News',
+    url: 'https://news.google.com/rss/search?q=Nike+CEO+Elliott+Hill&hl=en-US&gl=US&ceid=US:en',
+  },
+  {
+    label: 'Yahoo Finance',
+    url: 'https://feeds.finance.yahoo.com/rss/2.0/headline?s=NKE&region=US&lang=en-US',
+  },
+];
+
+const CORS_PROXY = 'https://api.allorigins.win/get?url=';
+
+// ── State ───────────────────────────────────────────────────────────────────
+let allItems = [];
+let currentFilter = 'all';
+
+// ── Main load ───────────────────────────────────────────────────────────────
+async function loadFeed(force = false) {
+  const btn = document.getElementById('refresh-btn');
+  const icon = document.getElementById('refresh-icon');
+  btn.disabled = true;
+  icon.classList.add('spinning');
+
+  showState('loading');
+  document.getElementById('last-updated').textContent = 'Fetching…';
+
+  const seen = new Set();
+  const results = [];
+
+  // Fetch all feeds in parallel
+  const fetches = FEEDS.map(feed =>
+    fetchRSS(feed.url, feed.label).catch(() => [])
+  );
+  const feedResults = await Promise.all(fetches);
+
+  for (const items of feedResults) {
+    for (const item of items) {
+      const key = item.title.trim().toLowerCase().slice(0, 60);
+      if (!seen.has(key)) {
+        seen.add(key);
+        results.push(item);
+      }
+    }
+  }
+
+  // Sort by date descending
+  results.sort((a, b) => new Date(b.pubDate || 0) - new Date(a.pubDate || 0));
+
+  allItems = results.slice(0, 60); // cap at 60 items
+
+  btn.disabled = false;
+  icon.classList.remove('spinning');
+
+  if (allItems.length === 0) {
+    showState('error');
+    document.getElementById('error-msg').textContent =
+      'No articles found. The RSS proxy may be rate-limited — try again in a moment.';
+    document.getElementById('last-updated').textContent = 'Failed';
+    return;
+  }
+
+  const now = new Date();
+  document.getElementById('last-updated').textContent =
+    'Updated ' + now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}) +
+    ' · ' + now.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+
+  renderItems();
+}
+
+// ── Fetch & parse one RSS feed ───────────────────────────────────────────────
+async function fetchRSS(feedUrl, sourceName) {
+  const proxied = CORS_PROXY + encodeURIComponent(feedUrl);
+  const res = await fetch(proxied, { cache: 'no-store' });
+  if (!res.ok) throw new Error('Proxy fetch failed');
+  const data = await res.json();
+  const xmlStr = data.contents;
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xmlStr, 'text/xml');
+  const items = Array.from(doc.querySelectorAll('item'));
+
+  return items.map(item => {
+    const title   = item.querySelector('title')?.textContent?.trim() || '';
+    const link    = item.querySelector('link')?.textContent?.trim() ||
+                    item.querySelector('guid')?.textContent?.trim() || '#';
+    const snippet = stripHtml(
+      item.querySelector('description')?.textContent ||
+      item.querySelector('summary')?.textContent || ''
+    ).trim().slice(0, 220);
+    const pubDate = item.querySelector('pubDate')?.textContent?.trim() ||
+                    item.querySelector('published')?.textContent?.trim() || '';
+    const rawSource = item.querySelector('source')?.textContent?.trim() || sourceName;
+
+    return { title, link, snippet, pubDate, source: rawSource, category: classifyItem(title, snippet) };
+  }).filter(i => i.title && i.title.length > 5);
+}
+
+function stripHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+}
+
+// ── Render ──────────────────────────────────────────────────────────────────
+function renderItems() {
+  const filtered = currentFilter === 'all'
+    ? allItems
+    : allItems.filter(i => i.category === currentFilter);
+
+  // Update counts
+  const counts = { finance:0, product:0, leadership:0, tech:0, compete:0, general:0 };
+  allItems.forEach(i => { if (counts[i.category] !== undefined) counts[i.category]++; else counts.general++; });
+
+  document.getElementById('cnt-all').textContent       = allItems.length;
+  document.getElementById('cnt-finance').textContent   = counts.finance;
+  document.getElementById('cnt-product').textContent   = counts.product;
+  document.getElementById('cnt-leadership').textContent= counts.leadership;
+  document.getElementById('cnt-tech').textContent      = counts.tech;
+  document.getElementById('cnt-compete').textContent   = counts.compete;
+
+  document.getElementById('tr-finance').textContent    = counts.finance;
+  document.getElementById('tr-product').textContent    = counts.product;
+  document.getElementById('tr-leadership').textContent = counts.leadership;
+  document.getElementById('tr-tech').textContent       = counts.tech;
+  document.getElementById('tr-compete').textContent    = counts.compete;
+
+  document.getElementById('item-count').textContent = allItems.length + ' items';
+
+  if (filtered.length === 0) {
+    showState('empty');
+    return;
+  }
+
+  showState('items');
+  const container = document.getElementById('items-container');
+  container.innerHTML = filtered.map(item => {
+    const catCfg = CATEGORIES[item.category] || { label: 'General', cls: 'tag-general' };
+    const safetitle = escHtml(item.title);
+    const safeSnippet = escHtml(item.snippet);
+    const safeSource = escHtml(item.source);
+    return `
+      <a class="news-item" href="${escHtml(item.link)}" target="_blank" rel="noopener">
+        <div>
+          <div class="ni-source">${safeSource}</div>
+          <div class="ni-headline">${safetitle}</div>
+          ${safeSnippet ? `<div class="ni-snippet">${safeSnippet}</div>` : ''}
+          <div class="ni-footer">
+            <span class="ni-date">${formatDate(item.pubDate)}</span>
+            <span class="ni-tag ${catCfg.cls}">${catCfg.label}</span>
+          </div>
+        </div>
+        <div class="ni-arrow">↗</div>
+      </a>`;
+  }).join('');
+}
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (allItems.length > 0) renderItems();
+}
+
+function showState(state) {
+  document.getElementById('loading-state').style.display  = state === 'loading' ? '' : 'none';
+  document.getElementById('items-container').style.display = state === 'items'  ? '' : 'none';
+  document.getElementById('error-state').style.display    = state === 'error'   ? '' : 'none';
+  document.getElementById('empty-state').style.display    = state === 'empty'   ? '' : 'none';
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Auto-load on page open
+loadFeed();
+</script>
+</body>
+</html>
